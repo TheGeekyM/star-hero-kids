@@ -31,6 +31,10 @@ node app/src/main/assets/monitor-logic.js  # Quran word matching, Focus Guard ru
 node app/src/main/assets/prayers.js        # prayer times
 ```
 
+## Licence
+
+The app's own code is released under the [MIT License](LICENSE). The third-party parts below keep their own licences.
+
 ## Credits and licences
 
 | What | Source | Licence |
