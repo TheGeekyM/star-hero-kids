@@ -1,0 +1,11 @@
+build/
+.gradle/
+local.properties
+keystore.properties
+keystore/
+*.apk
+*.aab
+
+# Big offline assets: fetched by scripts/fetch-assets.sh, not stored in the repo
+app/src/main/assets/quran/model/
+app/src/main/assets/quran/audio/

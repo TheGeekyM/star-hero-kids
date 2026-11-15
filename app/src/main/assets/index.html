@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Star Hero</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="monitor.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="extras.css">
+<script>
+// One-time carry-over: up to version 1.1 the app ran at file://, so move.html hands the saved data over in the address.
+if (location.hash.startsWith('#move=')) {
+  try { const v = decodeURIComponent(location.hash.slice(6)); if (v && !localStorage.getItem('starhero')) localStorage.setItem('starhero', v); } catch (e) { /* nothing to carry */ }
+  history.replaceState(null, '', location.pathname);
+}
+</script>
+</head>
+<body>
+<div id="app"></div>
+<script src="splash.js"></script>
+<script src="logic.js"></script>
+<script src="icons.js"></script>
+<script src="dialog.js"></script>
+<script src="celebrate.js"></script>
+<script src="ambience.js"></script>
+<script src="lib/adhan.js"></script>
+<script src="prayers.js"></script>
+<script src="share.js"></script>
+<script src="extras.js"></script>
+<script src="app.js"></script>
+<script src="monitor-logic.js"></script>
+<script src="monitor.js"></script>
+<script src="badges.js"></script>
+</body>
+</html>

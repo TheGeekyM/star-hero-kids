@@ -1,0 +1,123 @@
+/* Star Hero extras (extras.js): dress-up, homework photo, voice cheers, Ramadan, good deeds, certificate */
+
+/* ---------- dress-up items on the hero (positions are % of the hero picture) ---------- */
+.hero3d { isolation: isolate; }
+.hero3d .body { z-index: 1; }
+.xd { position: absolute; z-index: 2; pointer-events: none; }
+.xd svg, .xd img { display: block; width: 100%; height: auto; }
+.xcrown { left: 48%; top: -8%; width: 33%; transform: translateX(-50%) rotate(-4deg); animation: xwob 2.6s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes xwob { 50% { transform: translateX(-50%) rotate(4deg); } }
+.xeyes { left: 48%; top: 16.2%; width: 23%; transform: translateX(-50%); }
+.xorbit { left: 48%; top: 2%; width: 50%; height: 10%; transform: translateX(-50%); }
+.xorbit i { position: absolute; left: 50%; top: 50%; margin: -.5em; font-style: normal; color: #FFE27A; text-shadow: 0 0 8px #FFB400; font-size: 18px;
+  animation: xorbit 3s linear infinite; }
+.xorbit i:nth-child(2) { animation-delay: -.5s; } .xorbit i:nth-child(3) { animation-delay: -1s; } .xorbit i:nth-child(4) { animation-delay: -1.5s; }
+.xorbit i:nth-child(5) { animation-delay: -2s; } .xorbit i:nth-child(6) { animation-delay: -2.5s; }
+@keyframes xorbit {
+  0% { transform: translate(0, -60%) scale(.7); z-index: 0; } 25% { transform: translate(160%, 0) scale(.9); }
+  50% { transform: translate(0, 60%) scale(1.15); } 75% { transform: translate(-160%, 0) scale(.9); } 100% { transform: translate(0, -60%) scale(.7); } }
+.xpet { left: 70%; top: 52%; width: 40%; z-index: 3; animation: xpet 2.2s ease-in-out infinite; filter: drop-shadow(0 6px 6px rgba(0, 0, 0, .3)); }
+.xpet.twinkle { width: 30%; top: 46%; animation-name: xfloat; }
+.xpet.zib { width: 32%; }
+@keyframes xpet { 50% { transform: translateY(-6%) rotate(-4deg); } }
+@keyframes xfloat { 50% { transform: translateY(-18%) rotate(10deg); } }
+.xaura { inset: -10% -14% 10%; z-index: 0; border-radius: 50%; }
+.xaura.gold { background: radial-gradient(rgba(255, 226, 122, .95), rgba(255, 190, 40, .45) 40%, transparent 68%); animation: xglow 1.8s ease-in-out infinite; }
+.xaura.rainbow { background: conic-gradient(#FF5D8F, #FFB02E, #FFE27A, #7BE052, #3EC1FF, #B07CFF, #FF5D8F);
+  -webkit-mask: radial-gradient(#000 25%, transparent 66%); mask: radial-gradient(#000 25%, transparent 66%); animation: xspin 4s linear infinite; opacity: .85; }
+.xaura.fire { background: radial-gradient(ellipse at 50% 70%, rgba(255, 230, 120, .95), rgba(255, 120, 30, .7) 35%, rgba(230, 40, 20, .35) 55%, transparent 70%); animation: xflick .35s ease-in-out infinite alternate; }
+@keyframes xglow { 50% { transform: scale(1.08); opacity: .75; } }
+@keyframes xspin { to { transform: rotate(360deg); } }
+@keyframes xflick { to { transform: scale(1.04, 1.1) translateY(-2%); opacity: .85; } }
+
+/* ---------- dress-up shop (Rewards tab) ---------- */
+.xshop { margin: 4px 16px 18px; padding: 14px; border-radius: 26px; background: linear-gradient(160deg, #FFF3FB, #EDE4FF); box-shadow: 0 6px 0 #D6C8F5; }
+.xshop-head { display: flex; align-items: center; gap: 12px; }
+.xshop-head > div { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0; }
+.xshop-head h2 { margin: 0; position: static; }
+.xshop-head p { font-weight: 600; color: var(--mute); line-height: 1.25; }
+.hero3d.xprev { height: 150px; flex: none; animation: none; }
+.xshop h3 { margin: 12px 4px 6px; font-size: 15px; font-weight: 800; color: var(--purple); }
+.xgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.xitem { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px; border-radius: 18px; background: #fff; text-align: center; box-shadow: 0 4px 0 #DDD3F2; }
+.xitem:active { transform: translateY(3px); box-shadow: 0 1px 0 #DDD3F2; }
+.xitem[disabled] { opacity: .55; }
+.xitem.own { box-shadow: 0 4px 0 #9EE0B0; }
+.xitem.on { background: #FFF6D6; box-shadow: 0 4px 0 #EBC867, inset 0 0 0 3px #FFC531; }
+.xitem b { font-size: 12.5px; font-weight: 800; line-height: 1.1; }
+.xitem small { font-size: 12px; font-weight: 800; color: var(--mute); }
+.xitem.on small { color: #9A6B00; }
+.xart { width: 64px; height: 52px; display: grid; place-items: center; }
+.xart svg, .xart img { max-width: 100%; max-height: 100%; }
+.xart.eyes svg { width: 60px; }
+.xorbit-ic { color: #F2B705; font-size: 18px; letter-spacing: 2px; text-shadow: 0 0 6px #FFE27A; }
+.xsw { width: 44px; height: 44px; border-radius: 50%; display: block; }
+.xsw.gold { background: radial-gradient(#FFF3B0, #FFC531 55%, #E89A00); box-shadow: 0 0 14px #FFC531; }
+.xsw.rainbow { background: conic-gradient(#FF5D8F, #FFB02E, #FFE27A, #7BE052, #3EC1FF, #B07CFF, #FF5D8F); }
+.xsw.fire { background: radial-gradient(circle at 50% 70%, #FFE27A, #FF7A1A 50%, #D0261A); box-shadow: 0 0 14px #FF7A1A; }
+
+/* ---------- home cards: good deeds, Ramadan ---------- */
+.xcard { position: relative; margin-bottom: 18px; padding: 14px; border-radius: 26px; overflow: hidden; }
+.xcard-h { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.xcard-h b { font-size: 18px; font-weight: 800; }
+.xbig-ic { font-size: 30px; }
+.xdeeds { background: linear-gradient(160deg, #E9FFF1, #C9F5DA); box-shadow: 0 7px 0 #8FDDA9; }
+.xchips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.xchip { background: #fff; border-radius: 14px; padding: 3px 10px; font-weight: 700; font-size: 13px; box-shadow: 0 2px 0 rgba(0, 0, 0, .08); }
+.xchip em { font-style: normal; color: var(--ok-d); font-weight: 800; }
+.xchip.no { opacity: .45; text-decoration: line-through; }
+.xdeed-btn { font-size: 16px; }
+.xramadan { color: #FFF3C4; background: radial-gradient(circle at 80% 0, #3B2C8F, #1A1150 60%, #120B3A); box-shadow: 0 7px 0 #0B0628; min-height: 150px; }
+.xr-t { position: relative; z-index: 1; padding-inline-start: 4px; padding-inline-end: 96px; }
+.xr-t b { display: block; font-size: 24px; font-weight: 800; color: #FFD872; text-shadow: 0 2px 0 rgba(0, 0, 0, .4); }
+.xr-t small { display: block; font-weight: 700; opacity: .9; }
+.xiftar { display: inline-block; margin-top: 6px; padding: 2px 10px; border-radius: 12px; background: rgba(255, 216, 114, .18); font-weight: 800; font-size: 14px; }
+.xmoon { position: absolute; top: 12px; inset-inline-end: 22px; width: 54px; height: 54px; border-radius: 50%; box-shadow: -12px 6px 0 0 #FFD872; transform: rotate(-20deg); filter: drop-shadow(0 0 10px rgba(255, 216, 114, .7)); }
+[dir=rtl] .xmoon { box-shadow: 12px 6px 0 0 #FFD872; }
+.xlant { position: absolute; top: 0; width: 22px; height: 34px; border-radius: 6px 6px 10px 10px; background: linear-gradient(#FFB02E, #FF6B2C);
+  box-shadow: 0 0 16px rgba(255, 176, 46, .8); transform-origin: 50% -26px; animation: xswing 2.8s ease-in-out infinite; margin-top: 30px; }
+.xlant::before { content: ''; position: absolute; left: 50%; top: -30px; width: 2px; height: 30px; background: #C8A24A; }
+.xlant.l { inset-inline-end: 96px; } .xlant.r { inset-inline-end: 130px; animation-delay: -1.2s; height: 28px; }
+@keyframes xswing { 50% { transform: rotate(8deg); } }
+.xfastq { position: relative; z-index: 1; margin-top: 12px; }
+.xfastq > span { font-weight: 800; font-size: 16px; }
+.xfastq div { display: flex; gap: 8px; margin-top: 6px; }
+.xfastq .btn { font-size: 15px; padding: 8px 6px; }
+.xfast { position: relative; z-index: 1; margin-top: 12px; font-weight: 800; font-size: 16px; color: #A8FFC0; }
+
+/* ---------- parent approvals: photos and deed rows ---------- */
+.xph { width: 58px; height: 58px; object-fit: cover; border-radius: 12px; flex: none; box-shadow: 0 3px 0 rgba(0, 0, 0, .15); opacity: 0; }
+.xph.ok { opacity: 1; }
+.xemo { font-size: 30px; line-height: 44px; width: 44px; height: 44px; text-align: center; }
+.xbig { position: fixed; inset: 0; z-index: 2147482000; display: grid; place-items: center; padding: 14px; background: rgba(0, 0, 0, .85); }
+.xbig img { max-width: 100%; max-height: 100%; border-radius: 16px; }
+.xvoice { display: flex; align-items: center; gap: 8px; }
+.xcert { margin: 6px 0 14px; }
+
+/* ---------- full-screen camera, deed picker, recorder ---------- */
+.xcam { position: fixed; inset: 0; z-index: 2147482000; display: flex; flex-direction: column; background: #120B3A; color: #fff; }
+.xcam-top { padding: 16px 18px 8px; text-align: center; }
+.xcam-top b { display: block; font-size: 22px; font-weight: 800; }
+.xcam-top small { opacity: .85; font-weight: 600; }
+.xcam-view { position: relative; flex: 1; margin: 6px 12px; border-radius: 22px; overflow: hidden; background: #000; }
+.xcam-view video, .xcam-view img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.xcam-view img { display: none; }
+.xcam.shot .xcam-view img { display: block; }
+.xcam-bar { display: flex; gap: 10px; justify-content: center; align-items: center; padding: 14px 12px 22px; }
+.xc { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 76px; padding: 8px 10px; border-radius: 18px; color: #fff; font-weight: 800; font-size: 13px; background: rgba(255, 255, 255, .14); text-align: center; }
+.xc svg { width: 28px; height: 28px; }
+.xc.big { min-width: 120px; padding: 14px; background: linear-gradient(#FFE27A, #FFB800); color: #3B2A00; box-shadow: 0 5px 0 #C78A00; }
+.xc.go { background: linear-gradient(#5CE27F, #34C759); box-shadow: 0 5px 0 #1E9E40; }
+.xcam [data-x="again"], .xcam [data-x="send"] { display: none; }
+.xcam.shot [data-x="again"], .xcam.shot [data-x="send"] { display: flex; }
+.xcam.shot [data-x="snap"], .xcam.shot [data-x="cancel"] { display: none; }
+.xpick, .xrec { position: fixed; inset: 0; z-index: 2147482000; display: grid; place-items: center; padding: 18px; background: rgba(30, 16, 80, .6); }
+.xpick-card, .xrec-card { width: 100%; max-width: 380px; padding: 18px; border-radius: 28px; background: #fff; text-align: center; box-shadow: 0 9px 0 #DAD4F0; animation: pop .4s var(--ease); }
+.xpick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 8px; }
+.xpick-grid button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 6px; border-radius: 18px; background: #F1FFF5; box-shadow: 0 4px 0 #A8E8BD; text-align: center; }
+.xpick-grid button:active { transform: translateY(3px); box-shadow: 0 1px 0 #A8E8BD; }
+.xpick-grid span { font-size: 34px; }
+.xpick-grid b { font-weight: 800; font-size: 14px; line-height: 1.15; }
+.xrec-card { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.xrec-card b { font-size: 20px; font-weight: 800; }
+.xdot { width: 26px; height: 26px; border-radius: 50%; background: #FF3B4E; animation: glowp 1s ease-in-out infinite; }

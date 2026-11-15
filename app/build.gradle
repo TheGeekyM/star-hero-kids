@@ -1,0 +1,37 @@
+plugins { id "com.android.application" }
+
+// Release signing comes from keystore.properties (never commit it). Without it, release builds are unsigned.
+def ksFile = rootProject.file("keystore.properties")
+def ks = new Properties()
+if (ksFile.exists()) ksFile.withInputStream { ks.load(it) }
+
+android {
+    namespace "com.starhero.app"
+    compileSdk 36
+    defaultConfig {
+        applicationId "com.starhero.app"
+        minSdk 26
+        targetSdk 36
+        versionCode 14
+        versionName "2.0"
+    }
+    signingConfigs {
+        release {
+            if (ksFile.exists()) {
+                storeFile rootProject.file(ks["storeFile"])
+                storePassword ks["storePassword"]
+                keyAlias ks["keyAlias"]
+                keyPassword ks["keyPassword"]
+            }
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig ksFile.exists() ? signingConfigs.release : null
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

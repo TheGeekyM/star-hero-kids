@@ -1,0 +1,9 @@
+<!doctype html>
+<meta charset="utf-8">
+<body style="background:#2F9BFF">
+<script>
+// Runs once, at the old file:// address: carries the saved stars to the new address (see MainActivity).
+let v = '';
+try { v = localStorage.getItem('starhero') || ''; } catch (e) { /* first install: nothing saved */ }
+location.replace('https://appassets.androidplatform.net/index.html' + (v ? '#move=' + encodeURIComponent(v) : ''));
+</script>

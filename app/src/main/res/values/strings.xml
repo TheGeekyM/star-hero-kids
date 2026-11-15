@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Star Hero</string>
+    <color name="sky">#5B6CF0</color>
+    <style name="App" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:statusBarColor">#2F9BFF</item>
+        <item name="android:navigationBarColor">#FFFFFF</item>
+    </style>
+</resources>

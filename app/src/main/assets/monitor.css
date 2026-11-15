@@ -1,0 +1,155 @@
+/* Focus Guard screen (monitor.js). Sits above #app, so app.js re-renders never touch it. Colourful kid style. */
+#guard { position: fixed; inset: 0; z-index: 50; overflow-y: auto; user-select: none; background-color: #23B5D3;
+  background-image: radial-gradient(rgba(255, 255, 255, .22) 2px, transparent 2.5px), radial-gradient(circle at 0 0, #7BE0A6 0, transparent 45%),
+    radial-gradient(circle at 100% 100%, #8B5CF6 0, transparent 50%), linear-gradient(160deg, #2EC4E0, #3A8DFF);
+  background-size: 28px 28px, auto, auto, auto; background-attachment: local; }
+#guard[hidden] { display: none; }
+.gpage { position: relative; min-height: 100%; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.gpage .btn { border-radius: 20px; }
+.gpage .btn.go { background: linear-gradient(#FFEC80, #FFC531); color: #6B4300; text-shadow: none; box-shadow: 0 6px 0 #E39B00, 0 12px 16px -6px rgba(120, 70, 0, .45); font-size: 20px; padding: 14px; }
+.gpage .btn.off { background: rgba(255, 255, 255, .22); color: #fff; box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .8), 0 5px 0 rgba(0, 0, 0, .12); }
+.gpage .btn.wait { background: #fff; color: #9A6B00; box-shadow: 0 5px 0 rgba(0, 0, 0, .15); }
+.gpage .btn[disabled] { opacity: .6; }
+
+/* the corner camera: a small tall tile like a video call */
+.gcam { position: absolute; top: 14px; inset-inline-end: 14px; z-index: 5; width: 104px; height: 148px; border-radius: 22px; overflow: hidden;
+  background: linear-gradient(160deg, #3B2A8C, #1D1A4D); border: 4px solid #fff; box-shadow: 0 10px 22px rgba(10, 20, 80, .4); transform: rotate(2deg); }
+[dir=rtl] .gcam { transform: rotate(-2deg); }
+.gcam video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); opacity: 0; transition: opacity .3s; background: transparent; }
+.gcam.live video { opacity: 1; }
+.gcam-ph { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: #fff; text-align: center; padding: 8px; }
+.gcam-ph svg { width: 40px; height: 40px; animation: camPulse 1.4s ease-in-out infinite; }
+.gcam-ph small { font-size: 11px; font-weight: 700; line-height: 1.2; }
+.gcam.live .gcam-ph { display: none; }
+@keyframes camPulse { 50% { transform: scale(1.15); opacity: .7; } }
+.run .gcam::after { content: ''; position: absolute; top: 8px; inset-inline-start: 8px; width: 10px; height: 10px; border-radius: 50%; background: #FF4D5E;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .8); animation: camPulse 1s ease-in-out infinite; }
+
+/* top block sits beside the camera tile */
+.gtop { margin-inline-end: 118px; min-height: 148px; display: flex; flex-direction: column; gap: 8px; }
+.gpage header { display: flex; align-items: center; gap: 8px; color: #fff; }
+.gpage header h1 { font-size: 24px; line-height: 1.15; text-shadow: 0 3px 0 rgba(10, 40, 120, .3); }
+.gpage header h1 svg { width: 1em; height: 1em; vertical-align: -.12em; }
+.gx { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .25); color: #fff;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .7); }
+.gx svg { width: 20px; height: 20px; }
+.gpage h2 { display: flex; align-items: center; gap: 8px; color: #fff; margin: 0; font-size: 18px; line-height: 1.2; }
+.gkind { flex: none; width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; background: #fff; transform: rotate(-6deg); box-shadow: 0 3px 0 rgba(0, 0, 0, .12); }
+.gkind svg { width: 24px; height: 24px; }
+.gkind.quran { color: #1FB65A; }
+.gkind.homework { color: #1E8FF0; }
+.rec { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #FF4D5E; margin-inline-end: 8px; vertical-align: .1em; box-shadow: 0 0 0 3px rgba(255, 255, 255, .7); animation: camPulse 1s ease-in-out infinite; }
+
+/* live meters: three candy bars */
+.gmeters { background: rgba(255, 255, 255, .95); border-radius: 20px; padding: 10px 12px; display: grid; gap: 7px; box-shadow: 0 5px 0 rgba(10, 40, 120, .2); }
+.gm { display: grid; grid-template-columns: 64px 1fr; align-items: center; gap: 8px; font-weight: 800; font-size: 13px; color: var(--ink); }
+.gbar { position: relative; height: 14px; border-radius: 8px; background: #EEE9FB; overflow: hidden; }
+.gbar i { position: absolute; inset-block: 0; inset-inline-start: 0; border-radius: 8px; transition: width .2s; background: linear-gradient(90deg, #5CE27F, #22B85A); }
+.gm:nth-child(2) .gbar i { background: linear-gradient(90deg, #5FC6FF, #1E8FF0); }
+.gm:nth-child(3) .gbar i { background: linear-gradient(90deg, #B58BFF, #7B3FE4); }
+.gbar i.hot { background: linear-gradient(90deg, #FF8C99, #F04E62) !important; }
+.gbar u { position: absolute; inset-block: 0; width: 3px; border-radius: 2px; background: var(--ink); }
+
+/* setup form */
+.gform { background: #fff; border-radius: 26px; padding: 14px; display: grid; gap: 10px; box-shadow: 0 6px 0 rgba(10, 40, 120, .2); }
+.gform label { display: grid; gap: 4px; font-weight: 800; font-size: 14px; color: var(--mute); }
+.gform select, .gform input { width: 100%; padding: 10px; border-radius: 14px; border: 3px solid #E7E0FF; font-size: 17px; background: #FBFAFF; font-weight: 700; }
+.gline { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.glabel { font-weight: 800; color: var(--mute); font-size: 14px; }
+.gchips { display: flex; flex-wrap: wrap; gap: 8px; }
+.gchips button { padding: 9px 14px; border-radius: 16px; background: #F1EEFB; color: var(--purple); font-weight: 800; box-shadow: 0 3px 0 #DDD4FA; }
+.gchips button:nth-child(6n + 1).on { background: linear-gradient(#FF9F6B, #FF6A3D); box-shadow: 0 3px 0 #D24A1F; }
+.gchips button:nth-child(6n + 2).on { background: linear-gradient(#6EE38F, #22B85A); box-shadow: 0 3px 0 #168A41; }
+.gchips button:nth-child(6n + 3).on { background: linear-gradient(#6FCBFF, #1E8FF0); box-shadow: 0 3px 0 #0F68BC; }
+.gchips button:nth-child(6n + 4).on { background: linear-gradient(#FF8FC0, #F0508F); box-shadow: 0 3px 0 #BE2E69; }
+.gchips button:nth-child(6n + 5).on { background: linear-gradient(#B58BFF, #7B3FE4); box-shadow: 0 3px 0 #5522B8; }
+.gchips button:nth-child(6n).on { background: linear-gradient(#4FE3D0, #12AFA0); box-shadow: 0 3px 0 #0A8478; }
+.gchips button.on { color: #fff; }
+.gnote { color: #fff; font-weight: 700; text-align: center; font-size: 15px; text-shadow: 0 1px 2px rgba(0, 0, 0, .15); }
+.gform .gnote { color: var(--mute); text-shadow: none; }
+.gerr, .gmodel.error { background: #FFE3E6; color: var(--no-d); border-radius: 16px; padding: 12px; font-weight: 700; }
+.gmodel { align-self: flex-start; background: rgba(255, 255, 255, .25); color: #fff; font-weight: 800; font-size: 14px; border-radius: 14px; padding: 4px 12px; }
+.gsens { background: rgba(255, 255, 255, .92); border-radius: 20px; padding: 10px 14px; }
+.gsens summary { font-weight: 800; cursor: pointer; color: var(--purple); }
+.gs { display: grid; gap: 2px; margin-top: 10px; font-size: 14px; font-weight: 700; }
+.gs input { width: 100%; accent-color: var(--purple); }
+.gcredit { color: rgba(255, 255, 255, .85); text-align: center; font-size: 12px; }
+
+/* Quran text */
+.gtext { background: #FFFDF5; border-radius: 26px; padding: 16px; font-family: 'Amiri', 'Noto Naskh Arabic', serif; font-size: 26px; line-height: 2.1;
+  text-align: justify; flex: 1; overflow-y: auto; min-height: 30vh; max-height: 50vh; border: 4px solid #FFE08A; box-shadow: 0 6px 0 rgba(10, 40, 120, .2); }
+.gtext.small { font-size: 20px; max-height: 32vh; flex: none; }
+.gtext .basm { text-align: center; color: var(--mute); }
+.gtext .w { border-radius: 8px; padding: 0 2px; transition: background .3s, color .3s; }
+.gtext .w.ok { color: var(--ok-d); }
+.gtext .w.bad, .gtext .w.miss { color: #fff; background: var(--no); }
+.gtext .w.cur { background: #FFF1B8; box-shadow: 0 3px 0 var(--gold); }
+.gtext .aya { color: var(--gold-d); font-size: .8em; }
+.gwrong { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.gwrong span { background: #fff; color: var(--no-d); border-radius: 14px; padding: 2px 12px; font-size: 22px; font-weight: 700; box-shadow: 0 3px 0 rgba(0, 0, 0, .12); }
+
+/* homework: a big countdown bubble with the hero */
+.gclock { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 34vh; }
+.gtime { display: grid; place-items: center; width: 150px; height: 150px; border-radius: 50%; font-size: 40px; font-weight: 800; color: var(--purple);
+  background: #fff; border: 8px solid #FFE45C; box-shadow: 0 8px 0 rgba(10, 40, 120, .25); }
+.gclock .hero3d { height: 170px; }
+.gbig { display: grid; place-items: center; min-height: 24vh; }
+.gbig .hero3d { height: 200px; }
+
+/* alert bubble */
+.gmsg { position: fixed; inset-inline: 16px; top: 32%; z-index: 60; background: #fff; border-radius: 30px; padding: 16px; display: flex; align-items: center; gap: 12px;
+  border: 5px solid #FFE45C; box-shadow: 0 0 0 6px #FF6A3D, 0 24px 40px rgba(0, 0, 0, .3); animation: gpop .35s var(--ease); }
+.gmsg[hidden] { display: none; }
+.gmsg .hero3d { height: 90px; }
+.gmsg b { font-size: 22px; line-height: 1.3; }
+
+/* result */
+.gpage.done { text-align: center; color: #fff; align-items: stretch; }
+.gpage.done h1 { font-size: 32px; text-shadow: 0 3px 0 rgba(10, 40, 120, .3); }
+.gpage.done p { font-weight: 700; font-size: 18px; }
+.gpage.done h2 { justify-content: center; }
+.gpage.done .gtext { color: var(--ink); }
+@keyframes gpop { from { transform: scale(.6); opacity: 0; } }
+
+/* ---------- 1.6: memorize, listen, practice, breaks, parent voice, bonus, report ---------- */
+.gtoggle, .glisten { display: flex; align-items: center; justify-content: center; gap: 8px; height: 46px; border-radius: 16px; font-weight: 800; text-align: center;
+  background: #F1EEFB; color: var(--purple); box-shadow: 0 3px 0 #DDD4FA; }
+.gtoggle svg, .glisten svg { width: 22px; height: 22px; }
+.gtoggle.on { background: linear-gradient(#B58BFF, #7B3FE4); color: #fff; box-shadow: 0 3px 0 #5522B8; }
+.glisten { background: #E2F7EA; color: var(--ok-d); box-shadow: 0 3px 0 #BFE9CF; }
+.glisten.on { background: linear-gradient(#5CE27F, #22B85A); color: #fff; box-shadow: 0 3px 0 #168A41; }
+/* memorize: unread words are blank bars until the child says them */
+.gtext.hifz .w:not(.ok):not(.bad):not(.miss) { color: transparent; background: #F1E7C2; }
+.gtext.hifz .w.cur { background: #FFE08A; }
+.gtext .w[data-g] { cursor: pointer; }
+.gtext .w.playing { background: #D7F5E1; box-shadow: 0 3px 0 #22B85A; }
+.gpractice { background: #FFF6D6; border-radius: 22px; padding: 12px 14px; display: grid; gap: 8px; border: 3px solid #FFE08A; box-shadow: 0 5px 0 rgba(10, 40, 120, .18); }
+.gpractice b { display: flex; align-items: center; gap: 6px; color: #9A6B00; font-size: 17px; }
+.gpractice b svg { width: 22px; height: 22px; }
+.gpractice small { color: #9A6B00; font-weight: 700; }
+.gwrong button { display: inline-flex; align-items: center; gap: 4px; background: #fff; color: var(--no-d); border-radius: 14px; padding: 2px 12px; font-size: 22px;
+  font-weight: 700; box-shadow: 0 3px 0 rgba(0, 0, 0, .12); font-family: 'Amiri', 'Noto Naskh Arabic', serif; }
+.gwrong button svg { width: 16px; height: 16px; color: var(--ok-d); }
+.gwrong button.playing { background: #D7F5E1; }
+.gvoice { display: grid; gap: 6px; margin-top: 14px; padding-top: 10px; border-top: 2px dashed #E7E0FF; }
+.gvoice small { color: var(--mute); font-weight: 600; line-height: 1.3; }
+.gvrow { display: flex; align-items: center; gap: 6px; }
+.gvrow span { flex: 1; min-width: 0; font-weight: 700; font-size: 14px; }
+.gvb { flex: none; height: 38px; min-width: 38px; padding: 0 10px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; font-size: 14px;
+  background: #F1EEFB; color: var(--purple); }
+.gvb svg { width: 18px; height: 18px; }
+.gvb.rec { background: #FFE9EC; color: var(--no-d); }
+.gvb.rec.on { background: var(--no); color: #fff; animation: camPulse 1s ease-in-out infinite; }
+.gvb.del { color: var(--mute); }
+.gbonus { align-self: center; display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(#FFEC80, #FFC531); color: #6B4300 !important;
+  border-radius: 18px; padding: 6px 14px; box-shadow: 0 4px 0 #E39B00; font-size: 17px !important; }
+.gbonus svg { width: 22px; height: 22px; }
+.gclock.rest h1 { color: #fff; font-size: 30px; text-shadow: 0 3px 0 rgba(10, 40, 120, .3); }
+.gclock.rest .gtime { border-color: #7BE0A6; color: var(--ok-d); }
+/* parent report block (inside app.js's Report tab) */
+.grep { background: #fff; border-radius: 18px; padding: 12px; box-shadow: 0 2px 0 #E3DEF2; margin-bottom: 10px; }
+.grep .tiles { grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); }
+.gweek { display: flex; gap: 6px; height: 90px; align-items: flex-end; padding: 4px 2px 0; }
+.gweek span { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 3px; }
+.gweek i { width: 100%; min-height: 3px; border-radius: 8px 8px 3px 3px; background: linear-gradient(#5FC6FF, #1E8FF0); }
+.gweek small { font-size: 11px; font-weight: 800; color: var(--mute); }
