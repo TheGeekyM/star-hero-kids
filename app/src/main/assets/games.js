@@ -26,6 +26,13 @@ const Games = (() => {
       sort: 'Color sort', sortHow: 'Tap a tube, then another, to move a ball. Put each color in its own tube',
       shadow: 'Shadow match', shadowHow: 'Which picture made this shadow?',
       pipes: 'Water pipes', pipesHow: 'Tap a pipe to turn it. Connect them all so the water reaches every pipe',
+      learn: 'Learn & earn ⭐', free: 'Free · earn ⭐', record: 'New record!', capHit: 'You got all your game stars for today 🌟', loading: 'Getting ready…', loadFail: 'This game could not load.',
+      ayah: 'Ayah order', ayahHow: 'Tap the words of the ayah in the right order', ayahEnd: 'You put {0} ayat in order!',
+      letters: 'Letter sounds', lettersHow: 'Listen, then tap the letter you heard', listen: 'Listen again',
+      firstT: 'Missions first! 💪', firstP: 'Finish your missions for today and the games open. {0} left.', toMissions: 'Go to my missions',
+      sOn: 'Games tab', sFirst: 'Missions first: games and videos open after today\'s missions (prayers don\'t count)',
+      sCap: 'Stars per day from Learn & earn games', sHide: 'Tap a game to hide or show it', on: 'On', off: 'Off',
+      rMin: 'Minutes of games (last 7 days)', rTop: 'Played most', rPlays: 'Played: {0}', rNone: 'No games played yet.',
     },
     ar: {
       games: 'الألعاب', gamesSub: 'افتح اللعبة مرة واحدة بنجومك، ثم العب بها متى شئت!', simple: 'ألعاب بسيطة', puzzle: 'ألعاب الألغاز',
@@ -50,17 +57,37 @@ const Games = (() => {
       sort: 'رتّب الألوان', sortHow: 'المس أنبوباً ثم آخر لتنقل كرة. ضع كل لون في أنبوبه',
       shadow: 'طابق الظل', shadowHow: 'أي صورة صنعت هذا الظل؟',
       pipes: 'أنابيب الماء', pipesHow: 'المس الأنبوب لتديره. صِل الأنابيب كلها حتى يصل الماء إلى كل أنبوب',
+      learn: 'تعلّم واربح ⭐', free: 'مجانية · اربح ⭐', record: 'رقم قياسي جديد!', capHit: 'حصلت على كل نجوم الألعاب لهذا اليوم 🌟', loading: 'نجهّز…', loadFail: 'تعذّر تحميل اللعبة.',
+      ayah: 'رتّب الآية', ayahHow: 'المس كلمات الآية بالترتيب الصحيح', ayahEnd: 'رتّبت {0} آيات!',
+      letters: 'أصوات الحروف', lettersHow: 'استمع ثم المس الحرف الذي سمعته', listen: 'استمع مرة أخرى',
+      firstT: 'المهام أولاً! 💪', firstP: 'أنهِ مهام اليوم فتُفتح الألعاب. باقي {0}.', toMissions: 'اذهب إلى مهامي',
+      sOn: 'تبويب الألعاب', sFirst: 'المهام أولاً: تُفتح الألعاب والفيديو بعد مهام اليوم (الصلوات لا تُحسب)',
+      sCap: 'النجوم اليومية من ألعاب تعلّم واربح', sHide: 'المس اللعبة لتخفيها أو تظهرها', on: 'تشغيل', off: 'إيقاف',
+      rMin: 'دقائق الألعاب (آخر 7 أيام)', rTop: 'الأكثر لعباً', rPlays: 'لُعبت: {0}', rNone: 'لم يلعب أي لعبة بعد.',
     },
   };
   const tx = (k, ...a) => ((L[lang()] || L.en)[k] ?? L.en[k] ?? k).replace(/\{(\d)\}/g, (_, i) => a[i]);
-  // ponytail: costs start small and grow; one-time unlock, no stars earned from games (so they can't be farmed)
+  // Costs start small and grow; one-time unlock. Only the free Learn & earn games give stars, up to the parent's daily cap.
+  // rec: what the best score is: 'high' (more is better) or 'low' (fewer moves is better)
   const GAMES = [
-    { id: 'pop', kind: 'simple', icon: '🌟', cost: 3 }, { id: 'memory', kind: 'simple', icon: '🃏', cost: 5 }, { id: 'simon', kind: 'simple', icon: '🎨', cost: 8 },
-    { id: 'math', kind: 'brain', icon: '➕', cost: 6 }, { id: 'odd', kind: 'brain', icon: '🔍', cost: 6 }, { id: 'pattern', kind: 'brain', icon: '🔴', cost: 8 },
-    { id: 'clock', kind: 'brain', icon: '🕒', cost: 10 }, { id: 'make10', kind: 'brain', icon: '🔟', cost: 10 }, { id: 'copy', kind: 'brain', icon: '🖼️', cost: 12 }, { id: 'shadow', kind: 'brain', icon: '🌑', cost: 8 },
-    { id: 'slide', kind: 'puzzle', icon: '🧩', cost: 10 }, { id: 'ttt', kind: 'puzzle', icon: '❌', cost: 12 }, { id: 'lights', kind: 'puzzle', icon: '💡', cost: 15 },
-    { id: 'sudoku', kind: 'puzzle', icon: '🔢', cost: 14 }, { id: 'maze', kind: 'puzzle', icon: '🌀', cost: 16 }, { id: 'hanoi', kind: 'puzzle', icon: '🗼', cost: 18 }, { id: 'sort', kind: 'puzzle', icon: '🧪', cost: 20 }, { id: 'pipes', kind: 'puzzle', icon: '🚰', cost: 22 },
+    { id: 'ayah', kind: 'learn', icon: '📖', cost: 0, earn: true }, { id: 'letters', kind: 'learn', icon: '🔤', cost: 0, earn: true, rec: 'high' },
+    { id: 'pop', kind: 'simple', icon: '🌟', cost: 3, rec: 'high' }, { id: 'memory', kind: 'simple', icon: '🃏', cost: 5, rec: 'low' }, { id: 'simon', kind: 'simple', icon: '🎨', cost: 8, rec: 'high' },
+    { id: 'math', kind: 'brain', icon: '➕', cost: 6, rec: 'high' }, { id: 'odd', kind: 'brain', icon: '🔍', cost: 6, rec: 'high' }, { id: 'pattern', kind: 'brain', icon: '🔴', cost: 8, rec: 'high' },
+    { id: 'clock', kind: 'brain', icon: '🕒', cost: 10, rec: 'high' }, { id: 'make10', kind: 'brain', icon: '🔟', cost: 10, rec: 'low' }, { id: 'copy', kind: 'brain', icon: '🖼️', cost: 12 },
+    { id: 'shadow', kind: 'brain', icon: '🌑', cost: 8, rec: 'high' },
+    { id: 'slide', kind: 'puzzle', icon: '🧩', cost: 10, rec: 'low' }, { id: 'ttt', kind: 'puzzle', icon: '❌', cost: 12 }, { id: 'lights', kind: 'puzzle', icon: '💡', cost: 15, rec: 'low' },
+    { id: 'sudoku', kind: 'puzzle', icon: '🔢', cost: 14 }, { id: 'maze', kind: 'puzzle', icon: '🌀', cost: 16, rec: 'low' }, { id: 'hanoi', kind: 'puzzle', icon: '🗼', cost: 18 },
+    { id: 'sort', kind: 'puzzle', icon: '🧪', cost: 20 }, { id: 'pipes', kind: 'puzzle', icon: '🚰', cost: 22, rec: 'low' },
   ];
+  const KINDS = ['learn', 'simple', 'brain', 'puzzle'];
+
+  // ---------------------------------------------------------------- parent settings (db.gm), records (kid.gstats), the missions-first rule
+  const cfg = () => db.gm || (db.gm = { on: true, first: false, cap: 3, hide: [] });
+  const stats = (id, kid = st) => { const g = kid.gstats || (kid.gstats = {}); return g[id] || (g[id] = { p: 0, w: 0 }); }; // p plays, w wins, b best
+  const better = (rec, v, best) => best === undefined || (rec === 'low' ? v < best : v > best);
+  const canEarn = (cap, got) => (got || 0) < cap;
+  // today's missions the child hasn't finished; prayers don't count (all 5 only end at night), sent-for-approval counts as finished
+  const missionsLeft = (kid, day) => dueTasks(kid, day).filter(t => t.type !== 'prayer' && !['pending', 'done'].includes((kid.days[day] || {})[t.id])).length;
 
   // ---------------------------------------------------------------- pure rules (checked at the bottom)
   const LINES = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
@@ -168,7 +195,31 @@ const Games = (() => {
   const SHAPES = ['🐘', '🦒', '🐇', '🦋', '🐢', '✈️', '🚲', '🎸', '🍐', '🦀', '🐙', '⛵', '🦕', '🐓', '🌵', '🏠', '🐪', '🦉', '🍄', '🚀'];
   const COLORS = ['🔴', '🔵', '🟡', '🟢', '🟣', '🟠'];
   const pad2 = m => String(m).padStart(2, '0');
+  // Arabic letters and their names (the name is what the phone says out loud)
+  const LETTERS = [['ا', 'ألف'], ['ب', 'باء'], ['ت', 'تاء'], ['ث', 'ثاء'], ['ج', 'جيم'], ['ح', 'حاء'], ['خ', 'خاء'], ['د', 'دال'], ['ذ', 'ذال'], ['ر', 'راء'],
+    ['ز', 'زاي'], ['س', 'سين'], ['ش', 'شين'], ['ص', 'صاد'], ['ض', 'ضاد'], ['ط', 'طاء'], ['ظ', 'ظاء'], ['ع', 'عين'], ['غ', 'غين'], ['ف', 'فاء'],
+    ['ق', 'قاف'], ['ك', 'كاف'], ['ل', 'لام'], ['م', 'ميم'], ['ن', 'نون'], ['ه', 'هاء'], ['و', 'واو'], ['ي', 'ياء']];
+  const speak = text => { // always Arabic, whatever the app language
+    try {
+      if (window.Android && Android.speak) return Android.speak(text, 'ar');
+      if (window.speechSynthesis) { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'ar'; u.rate = .8; speechSynthesis.speak(u); }
+    } catch (e) { /* no voice */ }
+  };
+  let QURAN = null;
+  const loadQuran = async () => QURAN || (QURAN = ML.parseQuran(await (await fetch('quran/quran-simple.txt')).text()));
+  const ayaText = (s, a) => { const x = QURAN[s][a - 1]; return s === 1 || a !== 1 ? x : x.split(' ').slice(4).join(' '); }; // the 4-word basmala sits inside ayah 1 (as in more.js)
+  const suraName = s => window.Guard && Guard.suraName ? Guard.suraName(s, 'ar') : String(s);
+  let reciter = null;
+  const recite = (s, a) => { // recitation audio ships for Al-Fatiha and suras 67-114
+    if (s !== 1 && s < 67) return;
+    try { if (reciter) reciter.pause(); reciter = new Audio(`quran/audio/${String(s).padStart(3, '0')}${String(a).padStart(3, '0')}.mp3`); reciter.play().catch(() => {}); } catch (e) { /* no sound */ }
+  };
   const ASK = {
+    letters: () => {
+      const o = shuffle(LETTERS.slice()).slice(0, 4); // 4 letters, the first one is said
+      const opts = shuffle(o.map(x => x[0]));
+      return { q: `<button class="gsay" data-g="say">🔊 ${tx('listen')}</button>`, say: o[0][1], opts: opts.map(x => `<span lang="ar">${x}</span>`), right: opts.indexOf(o[0][0]), cols: 2 };
+    },
     shadow: () => { const o = shuffle(SHAPES.slice()).slice(0, 3); return { q: `<span class="gshadow">${o[0]}</span>`, ...choose(o[0], o.slice(1)) }; },
     math: n => {
       const max = n < 5 ? 10 : 20, plus = n < 3 || Math.random() < .5;
@@ -213,7 +264,7 @@ const Games = (() => {
         b.style.cssText = `left:${8 + Math.random() * 76}%;top:${6 + Math.random() * 76}%`;
         f.appendChild(b); api.later(() => b.remove(), 1600);
       }, 700);
-      api.every(() => { if (left <= 0) return; left--; const s = stat(); if (s) s.textContent = `⭐ ${score} · ⏱ ${left}`; if (!left) api.win(tx('popEnd', score)); }, 1000);
+      api.every(() => { if (left <= 0) return; left--; const s = stat(); if (s) s.textContent = `⭐ ${score} · ⏱ ${left}`; if (!left) api.win(tx('popEnd', score), true, score); }, 1000);
       return {
         view: () => `<p class="gstat">⭐ ${score} · ⏱ ${left}</p><div class="gfield"></div>`,
         tap: (k, i, b) => { if (k !== 'pop' || left <= 0) return false; score++; tune([880 + score * 20]); b.remove(); stat().textContent = `⭐ ${score} · ⏱ ${left}`; return false; },
@@ -231,7 +282,7 @@ const Games = (() => {
           up.push(i); tune([660]);
           if (up.length < 2) return;
           moves++;
-          if (cards[up[0]] === cards[up[1]]) { up.forEach(j => got.add(j)); up.length = 0; tune([660, 990]); if (got.size === cards.length) api.win(tx('moves', moves)); return; }
+          if (cards[up[0]] === cards[up[1]]) { up.forEach(j => got.add(j)); up.length = 0; tune([660, 990]); if (got.size === cards.length) api.win(tx('moves', moves), true, moves); return; }
           busy = true; api.later(() => { up.length = 0; busy = false; api.draw(); }, 800);
         },
       };
@@ -253,7 +304,7 @@ const Games = (() => {
         tap: (k, p) => {
           if (watching) return false;
           tune([NOTE[p]]); lit = p; api.later(() => { lit = -1; api.draw(); }, 250);
-          if (seq[at] !== p) { tune([330, 262]); watching = true; return api.win(tx('simEnd', seq.length), seq.length > 3); }
+          if (seq[at] !== p) { tune([330, 262]); watching = true; return api.win(tx('simEnd', seq.length), seq.length > 3, seq.length); }
           if (++at === seq.length) { watching = true; api.later(show, 700); }
         },
       };
@@ -263,7 +314,7 @@ const Games = (() => {
       let moves = 0;
       return {
         view: () => `<p class="gstat">${tx('moves', moves)}</p><div class="ggrid g3">${t.map((v, i) => v ? `<button class="gtile gup gnum" data-g="t" data-i="${i}">${v}</button>` : '<span class="gtile gblank"></span>').join('')}</div>`,
-        tap: (k, i) => { if (!slideMove(t, i)) return false; moves++; tune([520]); if (slideDone(t)) api.win(tx('moves', moves)); },
+        tap: (k, i) => { if (!slideMove(t, i)) return false; moves++; tune([520]); if (slideDone(t)) api.win(tx('moves', moves), true, moves); },
       };
     },
     ttt(api) {
@@ -286,19 +337,21 @@ const Games = (() => {
       let moves = 0;
       return {
         view: () => `<p class="gstat">${tx('moves', moves)}</p><div class="ggrid g3">${g.map((v, i) => `<button class="gtile glight ${v ? 'gon' : ''}" data-g="l" data-i="${i}">${v ? '⭐' : '☆'}</button>`).join('')}</div>`,
-        tap: (k, i) => { press(g, i); moves++; tune([g[i] ? 880 : 440]); if (g.every(Boolean)) api.win(tx('moves', moves)); },
+        tap: (k, i) => { press(g, i); moves++; tune([g[i] ? 880 : 440]); if (g.every(Boolean)) api.win(tx('moves', moves), true, moves); },
       };
     },
     // 10 questions; a wrong answer shows the right one for a second
     ...Object.fromEntries(Object.keys(ASK).map(id => [id, api => {
       const N = 10;
       let n = 0, score = 0, q = ASK[id](0), bad = -1;
+      if (q.say) api.later(() => speak(q.say), 300);
       return {
         view: () => `<p class="gstat">${tx('qOf', n + 1, N)} · ⭐ ${score}</p>${q.q ? `<div class="gq">${q.q}</div>` : ''}
           <div class="ggrid g${q.cols || 3}">${q.opts.map((o, i) => `<button class="gtile gup gopt ${bad < 0 ? '' : i === q.right ? 'gok' : i === bad ? 'gbad' : ''}" data-g="r" data-i="${i}">${o}</button>`).join('')}</div>`,
         tap: (k, i) => {
+          if (k === 'say') { speak(q.say); return false; }
           if (bad >= 0) return false;
-          const next = () => { bad = -1; if (++n === N) return api.win(tx('score', score, N), score >= N / 2); q = ASK[id](n); };
+          const next = () => { bad = -1; if (++n === N) return api.win(tx('score', score, N), score >= N / 2, score); q = ASK[id](n); if (q.say) api.later(() => speak(q.say), 300); };
           if (i === q.right) { score++; tune([660, 990]); return next(); }
           tune([330, 262]); bad = i; api.later(() => { next(); if (n < N) api.draw(); }, 1100);
         },
@@ -313,7 +366,7 @@ const Games = (() => {
         tap: (k, i) => {
           if (sel < 0 || sel === i) { sel = sel === i ? -1 : i; tune([520]); return; }
           moves++;
-          if (nums[sel] + nums[i] === 10) { gone.add(sel); gone.add(i); tune([660, 990]); if (gone.size === nums.length) api.win(tx('moves', moves)); }
+          if (nums[sel] + nums[i] === 10) { gone.add(sel); gone.add(i); tune([660, 990]); if (gone.size === nums.length) api.win(tx('moves', moves), true, moves); }
           else tune([330, 262]);
           sel = -1;
         },
@@ -357,7 +410,7 @@ const Games = (() => {
           if (!(open[pos] & bit)) { tune([200]); return false; }
           pos += step; moves++; tune([600]);
           if (pos !== n * n - 1) return;
-          if (++lv === SIZES.length) return api.win(tx('levelsEnd', SIZES.length));
+          if (++lv === SIZES.length) return api.win(tx('levelsEnd', SIZES.length), true, moves);
           tune([660, 880, 1320]); next();
         },
       };
@@ -380,6 +433,33 @@ const Games = (() => {
         },
       };
     },
+    ayah(api) {
+      const N = 5;
+      let n = 0, q = null, got = 0, used = new Set(), bad = -1, busy = false;
+      const pool = () => { const m = window.More ? More.memorised() : []; return m.length ? m : [1, ...Array.from({ length: 22 }, (_, i) => 93 + i)]; };
+      const next = () => { // a random ayah of 3 to 8 words from the surahs the child knows (or the short ones)
+        for (let t = 0; t < 300 && (!q || q.n !== n); t++) {
+          const s = pick(pool()), a = 1 + ri(QURAN[s].length), w = ayaText(s, a).split(' ');
+          if (w.length >= 3 && w.length <= 8 && new Set(w).size > 1) q = { n, s, a, w, tiles: shuffle(w.map((_, i) => i)) };
+        }
+        if (!q || q.n !== n) q = { n, s: 112, a: 1, w: ayaText(112, 1).split(' '), tiles: shuffle([0, 1, 2, 3]) };
+        got = 0; used = new Set();
+      };
+      loadQuran().then(() => { next(); api.draw(); }, () => api.win(tx('loadFail'), false));
+      return {
+        view: () => !q ? `<p class="gstat">${tx('loading')}</p>` : `<p class="gstat">${tx('qOf', n + 1, N)} · <span lang="ar">سورة ${suraName(q.s)}</span></p>
+          <div class="gayah" lang="ar" dir="rtl">${q.w.slice(0, got).map(esc).join(' ')} ${got < q.w.length ? '<span class="gslot">…</span>' : ''}</div>
+          <div class="gwords" lang="ar" dir="rtl">${q.tiles.map(i => used.has(i) ? '' : `<button class="gword ${bad === i ? 'gbad' : ''}" data-g="w" data-i="${i}">${esc(q.w[i])}</button>`).join('')}</div>`,
+        tap: (k, i) => {
+          if (!q || busy) return false;
+          if (q.w[i] !== q.w[got]) { bad = i; tune([330, 262]); api.later(() => { bad = -1; api.draw(); }, 500); return; } // compare words, so a repeated word is fine
+          used.add(i); got++; tune([520 + got * 60]);
+          if (got < q.w.length) return;
+          busy = true; tune([660, 880, 1320]); recite(q.s, q.a);
+          api.later(() => { busy = false; if (++n === N) return api.win(tx('ayahEnd', N)); next(); api.draw(); }, 1600);
+        },
+      };
+    },
     pipes(api) {
       const SIZES = [3, 4, 5];
       let lv = 0, n = SIZES[0], g = pipesNew(n), moves = 0;
@@ -391,7 +471,7 @@ const Games = (() => {
         tap: (k, i) => {
           g[i] = rot(g[i]); moves++; tune([500 + (wet(g, n).size * 40)]);
           if (!pipesDone(g, n)) return;
-          if (++lv === SIZES.length) return api.win(tx('levelsEnd', SIZES.length));
+          if (++lv === SIZES.length) return api.win(tx('levelsEnd', SIZES.length), true, moves);
           tune([660, 880, 1320]); n = SIZES[lv]; g = pipesNew(n);
         },
       };
@@ -429,13 +509,33 @@ const Games = (() => {
         if (!el.firstChild) el.innerHTML = '<div class="xpick-card gbox"></div>'; // the card stays, so its pop-in plays once
         el.firstChild.innerHTML = `<div class="ghead"><b>${info.icon} ${tx(id)}</b><button class="gclose" data-g="close" aria-label="${tx('close')}">✕</button></div>
           ${done ? `<div class="gdone">${hero(done.happy ? 'cheer' : 'happy', 'ghero')}<h2>${done.happy ? tx('win') : ''}</h2><p class="gstat">${esc(done.msg)}</p>
+            ${done.rec ? `<p class="grec">🏆 ${tx('record')}</p>` : ''}${done.earned ? `<p class="mbig">+${done.earned} ${star}</p>` : done.capped ? `<small class="ghow">${tx('capHit')}</small>` : ''}
             <button class="btn go" data-g="again">${tx('again')}</button></div>`
           : `<small class="ghow">${tx(id + 'How')}</small>${game.view()}`}`;
       },
-      win: (msg, happy = true) => { stop(); done = { msg, happy }; if (happy && window.celebrate) celebrate(); api.later(api.draw, 600); return false; },
+      win: (msg, happy = true, val) => { // val: this game's score for the record (see GAMES rec)
+        stop(); done = { msg, happy };
+        const s = stats(id);
+        if (happy) s.w++;
+        if (info.rec && val !== undefined && better(info.rec, val, s.b)) { done.rec = s.b !== undefined; s.b = val; }
+        if (info.earn && happy) {
+          const d = dayOf(st, today());
+          if (canEarn(cfg().cap, d._g)) { d._g = (d._g || 0) + 1; gain(st, today(), 1, ['game', tx(id)]); done.earned = 1; } else done.capped = true;
+        }
+        save();
+        if (happy && window.celebrate) celebrate();
+        api.later(api.draw, 600); return false;
+      },
     };
+    const t0 = Date.now();
+    stats(id).p++; save();
     const start = () => { stop(); done = null; game = PLAY[id](api); api.draw(); };
-    const close = () => { stop(); clearInterval(lock); el.remove(); window.onBack = back; };
+    const close = () => {
+      stop(); clearInterval(lock); el.remove(); window.onBack = back;
+      if (reciter) reciter.pause();
+      const d = dayOf(st, today()); d._gm = Math.round(((d._gm || 0) + (Date.now() - t0) / 60000) * 10) / 10; // minutes played, for the parent report
+      save(); render(); // shows the new best on the game's tile
+    };
     window.onBack = () => { close(); return true; };
     const lock = setInterval(() => { if (document.querySelector('.mlock')) close(); }, 3000); // play-time limit (more.js) closes games too
     el.addEventListener('click', e => {
@@ -452,20 +552,43 @@ const Games = (() => {
 
   // ---------------------------------------------------------------- Games tab
   const owned = () => st.games || (st.games = []);
+  const has = x => !x.cost || owned().includes(x.id);
+  const locked = () => cfg().first ? missionsLeft(st, today()) : 0;
   function page() {
-    const own = owned();
+    const left = locked(), shown = GAMES.filter(x => !cfg().hide.includes(x.id));
     return `<div class="scroll shop gpage">
       <header class="shophead"><div><h1>${tx('games')}</h1><p>${tx('gamesSub')}</p></div><div class="pill">${star}<b>${st.stars}</b></div></header>
-      ${['simple', 'brain', 'puzzle'].map(kind => `<section class="gcard"><h3>${tx(kind)}</h3><div class="xgrid">${GAMES.filter(x => x.kind === kind).map(x => {
-        const has = own.includes(x.id), can = st.stars >= x.cost;
-        return `<button class="xitem ${has ? 'own' : ''}" data-a="${has ? 'gPlay' : 'gBuy'}" data-id="${x.id}" ${!has && !can ? 'disabled' : ''}>
-          <span class="xart gart">${has ? x.icon : '🔒'}</span><b>${tx(x.id)}</b>
-          <small>${has ? '▶ ' + tx('play') : can ? `${x.cost} ⭐` : tx('need', x.cost - st.stars) + ' ⭐'}</small></button>`;
+      ${left ? `<section class="gcard glock">${hero('happy', 'ghero')}<h2>${tx('firstT')}</h2><p class="msub">${tx('firstP', left)}</p>
+        <button class="btn go" data-a="tab" data-id="home">${tx('toMissions')}</button></section>`
+      : KINDS.map(kind => shown.filter(x => x.kind === kind)).filter(l => l.length).map(list => `<section class="gcard ${list[0].kind === 'learn' ? 'glearn' : ''}"><h3>${tx(list[0].kind)}</h3><div class="xgrid">${list.map(x => {
+        const own = has(x), can = st.stars >= x.cost, b = stats(x.id).b;
+        return `<button class="xitem ${own ? 'own' : ''}" data-a="${own ? 'gPlay' : 'gBuy'}" data-id="${x.id}" ${!own && !can ? 'disabled' : ''}>
+          <span class="xart gart">${own ? x.icon : '🔒'}</span><b>${tx(x.id)}</b>
+          <small>${!x.cost && b === undefined ? tx('free') : own ? `▶ ${tx('play')}${b !== undefined ? ` · 🏆 ${b}` : ''}` : can ? `${x.cost} ⭐` : tx('need', x.cost - st.stars) + ' ⭐'}</small></button>`;
       }).join('')}</div></section>`).join('')}</div>`;
   }
 
+  // ---------------------------------------------------------------- parent zone: settings and report
+  const seg = (k, opts, val) => `<div class="seg grow">${opts.map(([v, l]) => `<button class="${String(val) === String(v) ? 'on' : ''}" data-a="gSet" data-id="${k}:${v}">${l}</button>`).join('')}</div>`;
+  function settings() {
+    const c = cfg(), onOff = [[1, tx('on')], [0, tx('off')]];
+    return `<h3>🎮 ${tx('games')}</h3><div class="edit">
+      <small class="hintx">${tx('sOn')}</small>${seg('on', onOff, c.on === false ? 0 : 1)}
+      <small class="hintx">${tx('sFirst')}</small>${seg('first', onOff, c.first ? 1 : 0)}
+      <small class="hintx">${tx('sCap')}</small>${seg('cap', [[0, tx('off')], [1, '1'], [3, '3'], [5, '5']], c.cap)}
+      <small class="hintx">${tx('sHide')}</small><div class="xchips">${GAMES.map(x => `<button class="xchip ${c.hide.includes(x.id) ? 'gdim' : ''}" data-a="gHide" data-id="${x.id}">${x.icon} ${tx(x.id)}</button>`).join('')}</div></div>`;
+  }
+  function report() {
+    const days = [...Array(7)].map((_, k) => addDays(today(), k - 6)), mins = days.map(d => Math.round((st.days[d] || {})._gm || 0)), max = Math.max(10, ...mins);
+    const top = GAMES.filter(x => stats(x.id).p).sort((a, b) => stats(b.id).p - stats(a.id).p).slice(0, 3);
+    return `<h3>🎮 ${tx('rMin')}</h3><div class="gbars">${days.map((d, k) => `<div><b>${mins[k]}</b><i style="height:${mins[k] / max * 100}%"></i><small>${parse(d).toLocaleDateString(lang(), { weekday: 'short' })}</small></div>`).join('')}</div>
+      <h3>${tx('rTop')}</h3>${top.length ? top.map(x => { const s = stats(x.id); return `<p class="gtoprow"><span>${x.icon} ${tx(x.id)}</span><small>${tx('rPlays', s.p)}${s.b !== undefined ? ` · 🏆 ${s.b}` : ''}</small></p>`; }).join('') : `<p class="hintx">${tx('rNone')}</p>`}`;
+  }
+
   const ACT = {
-    gPlay: id => { if (owned().includes(id)) open(id); return false; },
+    gPlay: id => { const x = GAMES.find(g => g.id === id); if (x && has(x) && !locked()) open(id); return false; },
+    gSet: v => { const [k, n] = v.split(':'); cfg()[k] = k === 'cap' ? +n : n === '1'; },
+    gHide: id => { const h = cfg().hide, i = h.indexOf(id); if (i < 0) h.push(id); else h.splice(i, 1); },
     gBuy: id => {
       const x = GAMES.find(g => g.id === id);
       if (!x || owned().includes(id) || st.stars < x.cost) return false;
@@ -480,11 +603,13 @@ const Games = (() => {
   };
   const install = actions => Object.assign(actions, ACT);
 
-  return { page, install, _: { winner, aiMove, slideNew, slideMove, slideDone, lightsNew, press, sudokuNew, sudokuOk, clash, mazeNew, DIRS, hanoiOk, sortNew, sortOk, sortDone, sortSolvable, make10New, ASK, rot, wet, pipesDone, pipesNew } };
+  const on = () => cfg().on !== false;
+  return { page, install, settings, report, on, _: { canEarn, better, missionsLeft, winner, aiMove, slideNew, slideMove, slideDone, lightsNew, press, sudokuNew, sudokuOk, clash, mazeNew, DIRS, hanoiOk, sortNew, sortOk, sortDone, sortSolvable, make10New, ASK, rot, wet, pipesDone, pipesNew } };
 })();
 
 if (typeof window !== 'undefined') window.Games = Games;
 else { // node games.js: rule checks
+  global.lang = () => 'en'; // app.js global
   const assert = require('assert'), { winner, aiMove, slideNew, slideMove, slideDone, lightsNew, press } = Games._;
   assert.strictEqual(winner(['X', 'X', 'X', '', '', '', '', '', '']), 'X');
   assert.strictEqual(winner(['X', 'O', 'X', 'X', 'O', 'O', 'O', 'X', 'X']), 'draw');
@@ -508,7 +633,7 @@ else { // node games.js: rule checks
     while (q.length) { const c = q.pop(); G.DIRS(n).forEach(([d, b, o]) => { if (open[c] & b) { assert.ok(open[c + d] & o); if (!seen.has(c + d)) { seen.add(c + d); q.push(c + d); } } }); }
     assert.strictEqual(seen.size, n * n);
     const nums = G.make10New(); assert.strictEqual(nums.length, 16); assert.ok(nums.every(v => v >= 1 && v <= 9));
-    for (const id of Object.keys(G.ASK)) { const r = G.ASK[id](k % 10); assert.strictEqual(new Set(r.opts.map(String)).size, id === 'odd' ? 2 : 3, id); assert.ok(r.right >= 0 && r.right < r.opts.length, id); }
+    for (const id of Object.keys(G.ASK)) { const r = G.ASK[id](k % 10); assert.strictEqual(new Set(r.opts.map(String)).size, id === 'odd' ? 2 : id === 'letters' ? 4 : 3, id); assert.ok(r.right >= 0 && r.right < r.opts.length, id); }
     const m = G.ASK.math(k % 10), [a, op, b] = m.q.replace(/<[^>]+>/g, '').split(' ');
     assert.strictEqual(m.opts[m.right], op === '+' ? +a + +b : a - b, 'math answer');
   }
@@ -524,5 +649,15 @@ else { // node games.js: rule checks
   }
   assert.strictEqual(G.rot(1), 2); assert.strictEqual(G.rot(8), 1); assert.strictEqual(G.rot(5), 10);
   assert.ok(!G.pipesDone([2, 8, 0, 0], 2), 'unconnected boxes are not solved');
+  // records, star cap, missions first (dueTasks comes from logic.js)
+  assert.ok(G.better('low', 5, 7) && !G.better('low', 8, 7) && G.better('high', 8, 7) && !G.better('high', 7, 7) && G.better('high', 0, undefined));
+  assert.ok(G.canEarn(3, 0) && G.canEarn(3, 2) && !G.canEarn(3, 3) && !G.canEarn(0, undefined) && G.canEarn(1, undefined));
+  const vm = require('vm'); vm.runInThisContext(require('fs').readFileSync(__dirname + '/logic.js', 'utf8')); global.dueTasks = vm.runInThisContext('dueTasks');
+  const all = [0, 1, 2, 3, 4, 5, 6], kid = { days: {}, tasks: [{ id: 1, days: all, since: '2026-01-01' }, { id: 2, days: all, since: '2026-01-01' }, { id: 3, type: 'prayer', days: all, since: '2026-01-01' }] };
+  const day = '2026-11-16';
+  assert.strictEqual(G.missionsLeft(kid, day), 2, 'prayers never count');
+  kid.days[day] = { 1: 'pending' }; assert.strictEqual(G.missionsLeft(kid, day), 1, 'waiting for approval counts as finished');
+  kid.days[day][2] = 'done'; assert.strictEqual(G.missionsLeft(kid, day), 0);
+  kid.tasks.forEach(t => { t.days = [1]; }); assert.strictEqual(G.missionsLeft(kid, '2026-11-17'), 0, 'rest day is open'); // Nov 17 2026 is a Tuesday
   console.log('games.js ok');
 }

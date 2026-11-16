@@ -347,7 +347,7 @@ function rewards() {
   </div>`;
 }
 
-const tabs = () => `<nav class="tabs">${['home', 'journey', 'rewards', ...(window.Games ? ['games'] : []), 'videos'].map(k =>
+const tabs = () => `<nav class="tabs">${['home', 'journey', 'rewards', ...(window.Games && Games.on() ? ['games'] : []), 'videos'].map(k =>
   `<button class="${ui.tab === k ? 'on' : ''}" data-a="tab" data-id="${k}">${SVG[k]}<span>${t(k)}</span></button>`).join('')}</nav>`;
 
 function party() {
@@ -440,7 +440,7 @@ function pReport() {
   const r = report(st, today());
   const cell = c => c.s === 'off' ? '' : c.n !== null && c.n && c.n < PRAYERS && c.s !== 'missed' ? `<em>${c.n}/5</em>`
     : { done: '✅', missed: '❌', pending: '⏳', todo: '·' }[c.s];
-  return `${window.Share ? `<button class="btn sharebtn" data-a="shareReport">${ic('share')} ${t('shareRep')}</button>` : ''}${window.Extras ? Extras.certButton() : ''}${window.More ? More.report() : ''}<h3>${t('week')}</h3>
+  return `${window.Share ? `<button class="btn sharebtn" data-a="shareReport">${ic('share')} ${t('shareRep')}</button>` : ''}${window.Extras ? Extras.certButton() : ''}${window.More ? More.report() : ''}${window.Games ? Games.report() : ''}<h3>${t('week')}</h3>
     <div class="tiles">
       <div><b dir="ltr">${r.full}/7</b><small>${t('fullDays')}</small></div>
       <div class="up"><b dir="ltr">${r.plus ? '+' + r.plus : 0}</b><small>${t('earnedW')}</small></div>
@@ -484,6 +484,7 @@ function pSettings() {
     ${window.Study ? Study.settings() : ''}
     ${window.Plus ? Plus.settings() : ''}
     ${window.More ? More.settings() : ''}
+    ${window.Games ? Games.settings() : ''}
     ${window.Extras ? Extras.settings() : ''}
     <button class="link danger" data-a="reset">${t('reset')}</button>`;
 }

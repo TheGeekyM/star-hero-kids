@@ -159,5 +159,5 @@
 .sharebtn svg { width: 24px; height: 24px; }
 
 /* 5th tab: videos (videos.html). With 5 tabs, phones show labels only on the open tab */
-.tabs button:nth-child(5).on { background: linear-gradient(#FFB36B, #FF7A1A); box-shadow: 0 4px 0 #C95A00, inset 0 2px 0 rgba(255, 255, 255, .4); }
+.tabs button[data-id="videos"].on { background: linear-gradient(#FFB36B, #FF7A1A); box-shadow: 0 4px 0 #C95A00, inset 0 2px 0 rgba(255, 255, 255, .4); }
 @media (max-width: 480px) { .tabs button:not(.on) span { display: none; } }

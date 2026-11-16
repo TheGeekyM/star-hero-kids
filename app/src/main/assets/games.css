@@ -2,7 +2,7 @@
 .shop.gpage { background-color: #1E8FF0;
   background-image: radial-gradient(rgba(255, 255, 255, .22) 2px, transparent 2.5px), radial-gradient(circle at 15% 0, #6EE3FF 0, transparent 45%),
     radial-gradient(circle at 100% 30%, #B07CFF 0, transparent 40%), linear-gradient(#3AA0F5, #1E7FE0 60%, #1A66C8); }
-.tabs button:nth-child(4).on { background: linear-gradient(#6EC8FF, #1E8FF0); box-shadow: 0 4px 0 #156BC0, inset 0 2px 0 rgba(255, 255, 255, .4); }
+.tabs button[data-id="games"].on { background: linear-gradient(#6EC8FF, #1E8FF0); box-shadow: 0 4px 0 #156BC0, inset 0 2px 0 rgba(255, 255, 255, .4); }
 .gcard { margin: 4px 16px 18px; padding: 14px; border-radius: 26px; background: linear-gradient(160deg, #EAFBFF, #CDEBFF); box-shadow: 0 6px 0 #9CCBF0; }
 .gcard h3 { margin: 0 4px 8px; font-size: 15px; font-weight: 800; color: var(--purple); }
 .gart { font-size: 38px; }
@@ -86,3 +86,24 @@
 .gpipes { direction: ltr; gap: 3px; padding: 4px; border-radius: 16px; background: #E9E6F5; }
 .gpipe { padding: 0; border-radius: 8px; background: #fff; box-shadow: 0 3px 0 #D6CFEB; overflow: hidden; }
 .gpipe svg { width: 100%; height: 100%; display: block; }
+
+/* 2.13: Learn & earn, records, missions-first lock, parent report */
+.glearn { background: linear-gradient(160deg, #FFFBEA, #FFE9A8); box-shadow: 0 6px 0 #E8C25A; }
+.glock { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.glock h2 { margin: 0; position: static; }
+.grec { font-weight: 800; font-size: 19px; color: #B07800; }
+.gsay { background: #FFF1D6; border-radius: 18px; padding: 12px 18px; font-weight: 800; font-size: 18px; box-shadow: 0 4px 0 #F2C27A; }
+.gopt span[lang="ar"] { font-family: system-ui, serif; font-size: 40px; line-height: 1; }
+.gayah, .gwords { font-family: system-ui, serif; width: 100%; }
+.gayah { min-height: 64px; font-size: 24px; line-height: 1.8; background: #F6F2FF; border-radius: 18px; padding: 10px 14px; }
+.gslot { color: var(--mute); }
+.gwords { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.gword { font-family: inherit; font-size: 22px; padding: 6px 14px; border-radius: 16px; background: #fff; border: 3px solid #E3DCFA; box-shadow: 0 4px 0 #E3DCFA; }
+.gword.gbad { border-color: #E5484D; background: #FFECEC; }
+.xchip.gdim { opacity: .4; text-decoration: line-through; }
+.gbars { display: flex; align-items: flex-end; gap: 6px; height: 120px; margin: 6px 0 4px; }
+.gbars div { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 2px; }
+.gbars i { width: 100%; min-height: 3px; border-radius: 6px 6px 2px 2px; background: linear-gradient(#6EC8FF, #1E8FF0); }
+.gbars b { font-size: 12px; } .gbars small { font-size: 11px; color: var(--mute); font-weight: 700; }
+.gtoprow { display: flex; justify-content: space-between; gap: 8px; padding: 6px 2px; font-weight: 800; border-bottom: 1px solid #EEEAF8; }
+.gtoprow small { color: var(--mute); font-weight: 700; }

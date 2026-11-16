@@ -29,6 +29,12 @@ const BADGES = [
   ['book1', 'books', 'c3', 'First book', 'أول كتاب', 'Finish a book', 'أنهِ كتاباً', c => c.books >= 1],
   ['bookworm', 'books', 'c2', 'Bookworm', 'محب القراءة', 'A book every week, 4 weeks in a row', 'كتاب كل أسبوع لمدة 4 أسابيع متتالية', c => c.bookWeeks >= 4],
   ['quiz', 'target', 'c4', 'Quiz star', 'نجم المسابقة', 'Get every question right in the Quran quiz', 'أجب عن كل أسئلة مسابقة القرآن صحيحاً', c => c.quizBest >= 5],
+  // games.js keeps wins (w) and best scores (b) per game in kid.gstats
+  ['game1', 'game', 'c2', 'First game win', 'أول فوز في لعبة', 'Win any game', 'افز في أي لعبة', c => c.gwins >= 1],
+  ['game25', 'trophy', 'c3', 'Game champion', 'بطل الألعاب', 'Win games 25 times', 'افز في الألعاب 25 مرة', c => c.gwins >= 25],
+  ['puzzles', 'target', 'c1', 'Puzzle master', 'سيد الألغاز', 'Win all 8 puzzle games', 'افز في ألعاب الألغاز الثمانية كلها', c => c.puzzles >= 8],
+  ['ayah10', 'quran', 'c0', 'Ayah builder', 'باني الآيات', 'Finish Ayah order 10 times', 'أنهِ لعبة رتّب الآية 10 مرات', c => c.ayahWins >= 10],
+  ['letters', 'books', 'c5', 'Letter hero', 'بطل الحروف', 'Get 10 of 10 in Letter sounds', 'أجب 10 من 10 في أصوات الحروف', c => c.lettersBest >= 10],
 ];
 
 const T = {
@@ -54,7 +60,9 @@ function facts(kid) {
   let books = 0;
   for (const d of Object.values(kid.days || {})) books += (d.x || []).filter(i => i.k === 'book' && i.s === 'done').length;
   const bookWeeks = typeof bookStreak === 'function' ? bookStreak(kid, today()) : 0, quizBest = (kid.quiz || {}).best || 0;
-  return { books, bookWeeks, quizBest, best: kid.best || 0, steps: kid.steps || 0, earned, doneMissions, khatmas: (kid.quran || {}).khatmas || 0, log: g.log, hifz: g.hifz, done, memorized: done.size, prayers };
+  const gs = kid.gstats || {}, gw = id => (gs[id] || {}).w || 0;
+  const gwins = Object.values(gs).reduce((n, x) => n + (x.w || 0), 0), puzzles = ['slide', 'ttt', 'lights', 'sudoku', 'maze', 'hanoi', 'sort', 'pipes'].filter(gw).length;
+  return { gwins, puzzles, ayahWins: gw('ayah'), lettersBest: (gs.letters || {}).b || 0, books, bookWeeks, quizBest, best: kid.best || 0, steps: kid.steps || 0, earned, doneMissions, khatmas: (kid.quran || {}).khatmas || 0, log: g.log, hifz: g.hifz, done, memorized: done.size, prayers };
 }
 const mine = kid => store[kid.id] || (store[kid.id] = {});
 
