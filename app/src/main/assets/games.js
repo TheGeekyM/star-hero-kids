@@ -27,7 +27,7 @@ const Games = (() => {
       shadow: 'Shadow match', shadowHow: 'Which picture made this shadow?',
       pipes: 'Water pipes', pipesHow: 'Tap a pipe to turn it. Connect them all so the water reaches every pipe',
       learn: 'Learn & earn ⭐', free: 'Free · earn ⭐', record: 'New record!', capHit: 'You got all your game stars for today 🌟', loading: 'Getting ready…', loadFail: 'This game could not load.',
-      ayah: 'Ayah order', ayahHow: 'Tap the words of the ayah in the right order', ayahEnd: 'You put {0} ayat in order!',
+      ayah: 'Ayah order', ayahHow: 'Tap the words of the ayah in the right order', ayahEnd: 'You put {0} ayat in order!', ayahTry: 'You put {0} ayat in order. Next time, try with fewer wrong taps to win a star ⭐',
       letters: 'Letter sounds', lettersHow: 'Listen, then tap the letter you heard', listen: 'Listen again',
       firstT: 'Missions first! 💪', firstP: 'Finish your missions for today and the games open. {0} left.', toMissions: 'Go to my missions',
       sOn: 'Games tab', sFirst: 'Missions first: games and videos open after today\'s missions (prayers don\'t count)',
@@ -58,7 +58,7 @@ const Games = (() => {
       shadow: 'طابق الظل', shadowHow: 'أي صورة صنعت هذا الظل؟',
       pipes: 'أنابيب الماء', pipesHow: 'المس الأنبوب لتديره. صِل الأنابيب كلها حتى يصل الماء إلى كل أنبوب',
       learn: 'تعلّم واربح ⭐', free: 'مجانية · اربح ⭐', record: 'رقم قياسي جديد!', capHit: 'حصلت على كل نجوم الألعاب لهذا اليوم 🌟', loading: 'نجهّز…', loadFail: 'تعذّر تحميل اللعبة.',
-      ayah: 'رتّب الآية', ayahHow: 'المس كلمات الآية بالترتيب الصحيح', ayahEnd: 'رتّبت {0} آيات!',
+      ayah: 'رتّب الآية', ayahHow: 'المس كلمات الآية بالترتيب الصحيح', ayahEnd: 'رتّبت {0} آيات!', ayahTry: 'رتّبت {0} آيات. في المرة القادمة حاول بأخطاء أقل لتربح نجمة ⭐',
       letters: 'أصوات الحروف', lettersHow: 'استمع ثم المس الحرف الذي سمعته', listen: 'استمع مرة أخرى',
       firstT: 'المهام أولاً! 💪', firstP: 'أنهِ مهام اليوم فتُفتح الألعاب. باقي {0}.', toMissions: 'اذهب إلى مهامي',
       sOn: 'تبويب الألعاب', sFirst: 'المهام أولاً: تُفتح الألعاب والفيديو بعد مهام اليوم (الصلوات لا تُحسب)',
@@ -82,7 +82,14 @@ const Games = (() => {
   const KINDS = ['learn', 'simple', 'brain', 'puzzle'];
 
   // ---------------------------------------------------------------- parent settings (db.gm), records (kid.gstats), the missions-first rule
-  const cfg = () => db.gm || (db.gm = { on: true, first: false, cap: 3, hide: [] });
+  const cfg = () => { // fills in anything missing, so a partly saved object never breaks the page
+    const c = db.gm || (db.gm = {});
+    if (typeof c.on !== 'boolean') c.on = true;
+    if (typeof c.first !== 'boolean') c.first = false;
+    if (typeof c.cap !== 'number') c.cap = 3;
+    if (!Array.isArray(c.hide)) c.hide = [];
+    return c;
+  };
   const stats = (id, kid = st) => { const g = kid.gstats || (kid.gstats = {}); return g[id] || (g[id] = { p: 0, w: 0 }); }; // p plays, w wins, b best
   const better = (rec, v, best) => best === undefined || (rec === 'low' ? v < best : v > best);
   const canEarn = (cap, got) => (got || 0) < cap;
@@ -435,7 +442,7 @@ const Games = (() => {
     },
     ayah(api) {
       const N = 5;
-      let n = 0, q = null, got = 0, used = new Set(), bad = -1, busy = false;
+      let n = 0, q = null, got = 0, used = new Set(), bad = -1, busy = false, wrong = 0; // more than N wrong taps: no star (no winning by tapping everything)
       const pool = () => { const m = window.More ? More.memorised() : []; return m.length ? m : [1, ...Array.from({ length: 22 }, (_, i) => 93 + i)]; };
       const next = () => { // a random ayah of 3 to 8 words from the surahs the child knows (or the short ones)
         for (let t = 0; t < 300 && (!q || q.n !== n); t++) {
@@ -452,11 +459,11 @@ const Games = (() => {
           <div class="gwords" lang="ar" dir="rtl">${q.tiles.map(i => used.has(i) ? '' : `<button class="gword ${bad === i ? 'gbad' : ''}" data-g="w" data-i="${i}">${esc(q.w[i])}</button>`).join('')}</div>`,
         tap: (k, i) => {
           if (!q || busy) return false;
-          if (q.w[i] !== q.w[got]) { bad = i; tune([330, 262]); api.later(() => { bad = -1; api.draw(); }, 500); return; } // compare words, so a repeated word is fine
+          if (q.w[i] !== q.w[got]) { bad = i; wrong++; tune([330, 262]); api.later(() => { bad = -1; api.draw(); }, 500); return; } // compare words, so a repeated word is fine
           used.add(i); got++; tune([520 + got * 60]);
           if (got < q.w.length) return;
           busy = true; tune([660, 880, 1320]); recite(q.s, q.a);
-          api.later(() => { busy = false; if (++n === N) return api.win(tx('ayahEnd', N)); next(); api.draw(); }, 1600);
+          api.later(() => { busy = false; if (++n === N) return api.win(tx(wrong <= N ? 'ayahEnd' : 'ayahTry', N), wrong <= N); next(); api.draw(); }, 1600);
         },
       };
     },

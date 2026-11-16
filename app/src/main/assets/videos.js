@@ -18,7 +18,7 @@
       closed: 'Videos are closed', closedSub: 'Open {0} minutes of videos for {1} ⭐. You have {2} ⭐.', open: 'Open {0} min for {1} ⭐', needMore: 'You need {0} more ⭐',
       buyQ: 'Spend {0} ⭐ to open {1} minutes of videos?', buy: 'Open', locked: 'Closed',
       price: 'Stars to open videos', unlock: 'Minutes for each opening', cap: 'Most video minutes a day', opened: 'Today: watched {0} min · opened {1} of {2} min',
-      oneMin: '1 minute of videos left!', playlist: 'Series', channel: 'Channel', handle: 'Channel @names can\'t be added. Open the channel, tap ⋮ → Share and copy that link, or paste a playlist link.', cant: "This video can't play here.", parent: 'Parent', close: 'Close',
+      oneMin: '1 minute of videos left!', soon: 'This one is not ready yet. Next video…', playlist: 'Series', channel: 'Channel', handle: 'Channel @names can\'t be added. Open the channel, tap ⋮ → Share and copy that link, or paste a playlist link.', cant: "This video can't play here.", parent: 'Parent', close: 'Close',
       pin: 'Parent PIN', pinBad: 'Wrong PIN',
       manage: 'Videos for {0}', addSub: 'Paste a YouTube link: one video, or a whole playlist (series). Only what you add here can be watched.',
       paste: 'https://www.youtube.com/…', add: '+ Add', adding: 'Checking…', badLink: 'That is not a YouTube video or playlist link.',
@@ -33,7 +33,7 @@
       buyQ: 'تصرف {0} ⭐ لتفتح {1} دقيقة من الفيديو؟', buy: 'افتح', locked: 'مقفلة',
       price: 'النجوم لفتح الفيديو', unlock: 'الدقائق لكل فتحة', cap: 'أقصى دقائق فيديو في اليوم', opened: 'اليوم: شوهد {0} دقيقة · فُتح {1} من {2} دقيقة',
       up: 'انتهت فيديوهات اليوم! 📺', upSub: 'شاهدت {0} دقيقة. اذهب والعب أو اقرأ أو ساعد في البيت. الفيديوهات تعود غداً!',
-      oneMin: 'بقيت دقيقة واحدة من الفيديو!', playlist: 'سلسلة', channel: 'قناة', handle: 'لا يمكن إضافة القناة باسمها @. افتح القناة واضغط ⋮ ← مشاركة وانسخ ذلك الرابط، أو الصق رابط قائمة تشغيل.', cant: 'لا يمكن تشغيل هذا الفيديو هنا.', parent: 'الوالدان', close: 'إغلاق',
+      oneMin: 'بقيت دقيقة واحدة من الفيديو!', soon: 'هذا الفيديو غير جاهز بعد. الفيديو التالي…', playlist: 'سلسلة', channel: 'قناة', handle: 'لا يمكن إضافة القناة باسمها @. افتح القناة واضغط ⋮ ← مشاركة وانسخ ذلك الرابط، أو الصق رابط قائمة تشغيل.', cant: 'لا يمكن تشغيل هذا الفيديو هنا.', parent: 'الوالدان', close: 'إغلاق',
       pin: 'رمز الوالدين', pinBad: 'رمز خاطئ',
       manage: 'فيديوهات {0}', addSub: 'الصق رابط يوتيوب: فيديو واحد أو قائمة تشغيل كاملة (سلسلة). لا يمكن مشاهدة إلا ما تضيفه هنا.',
       paste: 'https://www.youtube.com/…', add: '+ إضافة', adding: 'جارٍ التحقق…', badLink: 'هذا ليس رابط فيديو أو قائمة تشغيل من يوتيوب.',
@@ -164,7 +164,7 @@
       <div class="vbar"><b dir="auto">${esc(it.title)}</b>${timePill()}<button class="vround" data-p="close" aria-label="${tx('close')}">${ic('x')}</button></div>
       <div class="vlist"></div><div class="vmsg" hidden></div>`;
     document.body.appendChild(wrap);
-    P = { it, i, wrap, yt: null, big: false, ids: null };
+    P = { it, i, wrap, yt: null, big: false, ids: null, stuck: 0, skips: 0 };
     if (it.kind === 'video') upNext();
     let YT;
     try { YT = await loadApi(); } catch (e) { return say(tx('offline')); }
@@ -252,7 +252,11 @@
   let saidOne = false;
   setInterval(() => {
     if (!P || !P.yt || !P.yt.getPlayerState) return;
-    const playing = P.yt.getPlayerState() === 1;
+    const state = P.yt.getPlayerState(), playing = state === 1;
+    // a playlist/channel item that never starts (an upcoming premiere, a removed video) gives no error: skip it after 8 s, at most 5 in a row
+    if (P.it.kind === 'playlist' && (state === -1 || state === 5) && !document.hidden && leftSec() > 0) {
+      if (++P.stuck >= 8 && (P.skips || 0) < 5) { P.stuck = 0; P.skips = (P.skips || 0) + 1; say(tx('soon')); P.yt.nextVideo(); }
+    } else { P.stuck = 0; if (playing) P.skips = 0; }
     if (playing && !document.hidden) {
       const u = usage(); u.sec++; setUsage(u);
       const left = leftSec();
