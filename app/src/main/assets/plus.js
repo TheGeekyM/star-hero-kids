@@ -29,7 +29,7 @@ const Plus = (() => {
       log: 'My stars story', logSub: 'Where your stars came from and where they went', show: 'Show', hide: 'Hide', noLog: 'Nothing yet. Finish a mission!',
       k_task: '{0}', k_double: '⚡ {0} (double day)', k_chest: 'Treasure chest', k_planet: 'Planet finished', k_khatma: 'Finished the Quran', k_missed: 'Missed: {0}',
       k_adjust: 'From your parent', k_reward: 'Reward: {0}', k_refund: 'Stars back: {0}', k_shop: 'Dress-up: {0}', k_jar: 'Into the jar', k_jarBonus: 'Patience bonus',
-      k_quiz: 'Quran quiz', k_videos: 'Videos ({0} min)', k_game: 'Game: {0}', k_deed: 'Good deed', k_fast: 'Fasting', k_rev: 'Revision', k_book: 'Book: {0}', k_fix: 'Made it right', k_routine: 'Routine', k_idea: 'Great idea', k_: 'Stars',
+      k_quiz: 'Quran quiz', k_videos: 'Videos ({0} min)', k_game: 'Game: {0}', k_deed: 'Good deed', k_fast: 'Fasting', k_rev: 'Revision', k_book: 'Book: {0}', k_fix: 'Made it right', k_routine: 'Routine', k_idea: 'Great idea', k_kind: 'Being good: {0}', k_choice: 'Hero choice', k_value: 'Medal: {0}', k_secret: 'Secret mission', k_dua: 'Dua: {0}', k_teach: 'Lesson: {0}', k_refl: 'Bedtime review', k_sadaqa: 'Charity jar', k_: 'Stars',
     },
     ar: {
       cancel: 'إلغاء', pet: 'صديقي البطل', petName: 'شرارة', petNameQ: 'ما اسم صديقك؟', rename: 'غيّر الاسم',
@@ -54,7 +54,7 @@ const Plus = (() => {
       log: 'قصة نجومي', logSub: 'من أين جاءت نجومك وأين ذهبت', show: 'عرض', hide: 'إخفاء', noLog: 'لا شيء بعد. أنجز مهمة!',
       k_task: '{0}', k_double: '⚡ {0} (يوم مضاعف)', k_chest: 'صندوق الكنز', k_planet: 'أنهيت كوكباً', k_khatma: 'ختمت القرآن', k_missed: 'فاتك: {0}',
       k_adjust: 'من والديك', k_reward: 'جائزة: {0}', k_refund: 'عادت النجوم: {0}', k_shop: 'خزانة البطل: {0}', k_jar: 'في الحصالة', k_jarBonus: 'مكافأة الصبر',
-      k_quiz: 'مسابقة القرآن', k_videos: 'فيديو ({0} دقيقة)', k_game: 'لعبة: {0}', k_deed: 'عمل طيب', k_fast: 'الصيام', k_rev: 'مراجعة', k_book: 'كتاب: {0}', k_fix: 'صحّحت الأمر', k_routine: 'الروتين', k_idea: 'فكرة رائعة', k_: 'نجوم',
+      k_quiz: 'مسابقة القرآن', k_videos: 'فيديو ({0} دقيقة)', k_game: 'لعبة: {0}', k_deed: 'عمل طيب', k_fast: 'الصيام', k_rev: 'مراجعة', k_book: 'كتاب: {0}', k_fix: 'صحّحت الأمر', k_routine: 'الروتين', k_idea: 'فكرة رائعة', k_kind: 'خُلق طيب: {0}', k_choice: 'اختيار البطل', k_value: 'وسام: {0}', k_secret: 'المهمة السرية', k_dua: 'دعاء: {0}', k_teach: 'درس: {0}', k_refl: 'محاسبة النفس', k_sadaqa: 'صندوق الصدقة', k_: 'نجوم',
     },
   };
   const tx = (k, ...a) => { const v = (L[lang()] || L.en)[k] ?? L.en[k] ?? k; return typeof v === 'string' ? v.replace(/\{(\d)\}/g, (_, i) => a[i]) : v; };
@@ -62,9 +62,8 @@ const Plus = (() => {
   const pickOne = a => a[Math.random() * a.length | 0];
 
   // ---------------------------------------------------------------- read-aloud
-  function say(text) {
+  function say(text, lg = lang()) {
     if (!text) return;
-    const lg = lang();
     try {
       if (window.Android && Android.speak) return Android.speak(text, lg);
       if (window.speechSynthesis) { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = lg === 'ar' ? 'ar' : 'en-US'; u.rate = .95; speechSynthesis.speak(u); }
@@ -173,7 +172,8 @@ const Plus = (() => {
 
   // ---------------------------------------------------------------- star statement + ideas (Rewards tab)
   const KIND_IC = { task: '✅', double: '⚡', chest: '🧰', planet: '🪐', khatma: '📖', missed: '😢', adjust: '👪', reward: '🎁', refund: '↩️', shop: '👑', jar: '🫙', jarBonus: '🫙',
-    quiz: '🎧', videos: '📺', game: '🎮', deed: '🤲', fast: '🌙', rev: '🔁', book: '📚', fix: '💪', routine: '⏰', idea: '💡' };
+    quiz: '🎧', videos: '📺', game: '🎮', deed: '🤲', fast: '🌙', rev: '🔁', book: '📚', fix: '💪', routine: '⏰', idea: '💡',
+    kind: '🌷', choice: '🦸', value: '🏅', secret: '✉️', dua: '📿', teach: '🎓', refl: '🌙', sadaqa: '💝' };
   function rewards() {
     const my = ideas().slice(-4).reverse();
     const log = (st.log || []).slice(-40).reverse();

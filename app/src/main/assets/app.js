@@ -205,6 +205,7 @@ function home() {
     <h2>${t('today')}</h2>
     ${due.length ? due.map((x, i) => mission(x, i, day)).join('') : `<div class="empty">${t('rest')}</div>`}
     ${quranCard()}
+    ${window.Heart ? Heart.card() : ''}
     ${window.More ? More.homeCards() : ''}
     ${window.Extras ? Extras.homeDeeds() : ''}
   </main></div>`;
@@ -390,7 +391,7 @@ const dayName = day => day === today() ? t('todayW') : parse(day).toLocaleDateSt
 function pApprove() {
   const pend = pending(st), reqs = st.requests.filter(q => q.status === 'pending');
   const xrows = window.Extras ? Extras.approveRows() : ''; // good deeds and fasting (extras.js)
-  return `${window.Plus ? Plus.approveRows() : ''}${!pend.length && !reqs.length && !xrows ? `<div class="empty">${t('nothing')}</div>` : ''}
+  return `${window.Plus ? Plus.approveRows() : ''}${window.Heart ? Heart.approveRows() : ''}${!pend.length && !reqs.length && !xrows && !(window.Heart && Heart.pendingCount()) ? `<div class="empty">${t('nothing')}</div>` : ''}
     ${pend.length ? `<h3>${t('toApprove')}</h3>` + pend.map(({ day, task }) => {
       const g = (st.days[day] || {})['g' + task.id];
       const extra = task.type === 'prayer' ? t('prayersOf', prayed(st, day, task.id)) : [task.pages > 0 ? pagesText(task.pages) : '', task.target, g ? Guard.summary(g, lang()) : ''].filter(Boolean).map(esc).join(' · ');
@@ -440,7 +441,7 @@ function pReport() {
   const r = report(st, today());
   const cell = c => c.s === 'off' ? '' : c.n !== null && c.n && c.n < PRAYERS && c.s !== 'missed' ? `<em>${c.n}/5</em>`
     : { done: '✅', missed: '❌', pending: '⏳', todo: '·' }[c.s];
-  return `${window.Share ? `<button class="btn sharebtn" data-a="shareReport">${ic('share')} ${t('shareRep')}</button>` : ''}${window.Extras ? Extras.certButton() : ''}${window.More ? More.report() : ''}${window.Games ? Games.report() : ''}<h3>${t('week')}</h3>
+  return `${window.Share ? `<button class="btn sharebtn" data-a="shareReport">${ic('share')} ${t('shareRep')}</button>` : ''}${window.Extras ? Extras.certButton() : ''}${window.More ? More.report() : ''}${window.Games ? Games.report() : ''}${window.Heart ? Heart.report() : ''}<h3>${t('week')}</h3>
     <div class="tiles">
       <div><b dir="ltr">${r.full}/7</b><small>${t('fullDays')}</small></div>
       <div class="up"><b dir="ltr">${r.plus ? '+' + r.plus : 0}</b><small>${t('earnedW')}</small></div>
@@ -485,12 +486,13 @@ function pSettings() {
     ${window.Plus ? Plus.settings() : ''}
     ${window.More ? More.settings() : ''}
     ${window.Games ? Games.settings() : ''}
+    ${window.Heart ? Heart.settings() : ''}
     ${window.Extras ? Extras.settings() : ''}
     <button class="link danger" data-a="reset">${t('reset')}</button>`;
 }
 
 function parentZone() {
-  const waiting = k => pending(k).length + k.requests.filter(q => q.status === 'pending').length + (window.Extras ? Extras.pendingCount(k) : 0) + (window.Plus ? Plus.pendingCount(k) : 0);
+  const waiting = k => pending(k).length + k.requests.filter(q => q.status === 'pending').length + (window.Extras ? Extras.pendingCount(k) : 0) + (window.Plus ? Plus.pendingCount(k) : 0) + (window.Heart ? Heart.pendingCount(k) : 0);
   const body = { approve: pApprove, tasks: pTasks, rewards: pRewards, report: pReport, settings: pSettings }[ui.ptab]();
   return `<div class="parent"><header><h1>${t('parent')}</h1><button class="btn go" data-a="exit">${t('exit')}</button></header>
     ${db.kids.length > 1 ? `<div class="kidbar">${db.kids.map((k, i) => `<button class="${i === db.cur ? 'on' : ''}" data-a="pkid" data-id="${i}">${avatar(k)}<span>${esc(k.name)}</span>${waiting(k) ? `<em>${waiting(k)}</em>` : ''}</button>`).join('')}</div>` : ''}
@@ -528,6 +530,7 @@ function render() {
   if (window.Extras) Extras.after(app); // homework photos, parent voice cheer
   if (window.More) More.after(app); // play-time limit
   if (window.Plus) Plus.after(app); // love note, pet hatching
+  if (window.Heart) Heart.after(app); // 2.15: hero heart sheets, "caught being good" pop-ups
   // a sticker just earned (badges.js) is celebrated once, on the child's screens with nothing else on top
   if (db && !ui.parent && !overlay && window.Badges) setTimeout(() => Badges.check(st, lang()), 400);
   // planet sounds (ambience.js) only on the Journey tab
@@ -628,6 +631,7 @@ const actions = {
     db = newDb(ui.lang); db.pin = pin; addKid(db, name, today()); use();
   },
 };
+if (window.Heart) Heart.install(actions); // 2.15: kindness garden, hero choices, value of the week, secret mission, duas, be the teacher, bedtime review, charity jar
 if (window.Games) Games.install(actions); // 2.4: simple and puzzle games, opened with stars
 if (window.Extras) Extras.install(actions); // homework photo before Complete, dress-up, good deeds, Ramadan, cheers, backup
 if (window.Study) Study.install(actions); // 2.3: study timer with warrior rests

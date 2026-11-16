@@ -1,0 +1,70 @@
+/* Hero heart (heart.js) */
+.hcard { background: linear-gradient(160deg, #FFE3F0, #FFF6DA); }
+.hbed { position: relative; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: center; gap: 2px; width: 100%; min-height: 64px; padding: 14px 8px 12px;
+  border-radius: 20px; background: linear-gradient(#BDF2FF 0 50%, #8EDB6A 50%); box-shadow: inset 0 -6px 0 #5FB84A; }
+.hbed span { font-size: 28px; line-height: 1; transform-origin: 50% 100%; animation: hsway 3s ease-in-out infinite; animation-delay: calc(var(--i) * -.37s); }
+.hbed small { font-weight: 800; color: #2E6B1E; background: rgba(255, 255, 255, .8); border-radius: 12px; padding: 2px 10px; }
+.hbed em { position: absolute; top: 6px; inset-inline-end: 10px; font-style: normal; font-weight: 800; font-size: 12px; background: #fff; border-radius: 10px; padding: 1px 8px; }
+.hbed.big { max-height: 40vh; overflow-y: auto; background: linear-gradient(#BDF2FF 0 30px, #8EDB6A 30px); }
+@keyframes hsway { 50% { transform: rotate(8deg); } }
+.htiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+.htiles button { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 2px; border-radius: 16px; background: #fff; box-shadow: 0 4px 0 #F2C3DA; }
+.htiles button:active { transform: translateY(3px); box-shadow: 0 1px 0 #F2C3DA; }
+.htiles span { font-size: 26px; line-height: 1.2; }
+.htiles b { font-size: 11px; font-weight: 800; line-height: 1.15; text-align: center; }
+.htiles i { position: absolute; top: 4px; inset-inline-end: 6px; width: 10px; height: 10px; border-radius: 50%; background: #FF3D5A; box-shadow: 0 0 0 2px #fff; }
+
+/* sheets: under dialogs (z 100) so a question can pop up on top */
+.hsheet { z-index: 60; }
+.hsheet .xpick-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 10px; max-height: 92vh; overflow-y: auto; }
+.hsheet.still .xpick-card { animation: none; }
+.hsheet h2 { font-size: 20px; font-weight: 800; padding: 0 38px; }
+.hx { position: absolute; top: 10px; inset-inline-end: 10px; width: 36px; height: 36px; border-radius: 50%; background: #F1EEFB; display: grid; place-items: center; }
+.hx svg { width: 18px; height: 18px; }
+.hq { font-size: 18px; font-weight: 800; line-height: 1.4; }
+.hopts { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.hopts button { padding: 12px; border-radius: 16px; background: #F1EEFB; box-shadow: 0 4px 0 #D6CCF5; font-weight: 700; font-size: 15px; line-height: 1.3; }
+.hopts button:active { transform: translateY(3px); box-shadow: 0 1px 0 #D6CCF5; }
+.hopts button:disabled { color: var(--ink); }
+.hopts button.yes { background: #DFFBE8; box-shadow: 0 4px 0 #8FDDA9; }
+.hopts button.no { opacity: .45; text-decoration: line-through; }
+.hok, .hhmm { font-weight: 800; border-radius: 14px; padding: 8px 12px; line-height: 1.4; }
+.hok { background: #DFFBE8; color: #1D7A3E; }
+.hhmm { background: #FFF3CF; color: #8A5A00; }
+.hwhy, .hstory { line-height: 1.5; font-weight: 600; }
+.href { font-weight: 800; color: var(--purple); line-height: 1.7; background: #F6F2FF; border-radius: 14px; padding: 8px 12px; }
+.hnote { color: var(--mute); font-weight: 700; line-height: 1.4; }
+.hval-n { font-size: 24px; font-weight: 800; }
+.hchal { width: 100%; display: flex; flex-direction: column; gap: 6px; align-items: center; background: #FFF6DA; border-radius: 18px; padding: 10px; }
+.hchal b { font-size: 17px; line-height: 1.35; }
+.hchal em { font-style: normal; font-weight: 800; color: #1D7A3E; }
+.hdots { display: flex; gap: 6px; }
+.hdots i { width: 14px; height: 14px; border-radius: 50%; background: #E3DCFA; }
+.hdots i.on { background: #FFC531; box-shadow: inset 0 0 0 2px #E89A00; }
+.henv { font-size: 72px; line-height: 1.1; animation: hwob 1.6s ease-in-out infinite; }
+.henv.open { animation: pop .5s var(--ease); }
+.hsheet.still .henv.open { animation: none; }
+@keyframes hwob { 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
+.hduas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
+.hduas button { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 6px; border-radius: 16px; background: #F1FFF5; box-shadow: 0 4px 0 #A8E8BD; }
+.hduas button:active { transform: translateY(3px); box-shadow: 0 1px 0 #A8E8BD; }
+.hduas span { font-size: 28px; line-height: 1.2; }
+.hduas b { font-size: 13px; font-weight: 800; line-height: 1.2; }
+.hduas i { position: absolute; top: 4px; inset-inline-end: 6px; font-style: normal; }
+.hdua-e { font-size: 56px; line-height: 1.1; }
+.hdua { font-size: 25px; line-height: 1.9; font-weight: 700; color: #1E6B3A; background: #F1FFF5; border-radius: 18px; padding: 10px 14px; }
+.hback { align-self: flex-start; }
+.hjar { position: relative; width: 120px; height: 140px; border-radius: 24px 24px 40px 40px; border: 5px solid #B9E4FF; background: #F4FBFF; overflow: hidden; display: grid; place-items: center; }
+.hjar i { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(#FFD45E, #FFB020); transition: height .6s var(--ease); }
+.hjar span { position: relative; font-size: 44px; }
+.hjar-n { font-size: 20px; font-weight: 800; }
+.hsheet .line { display: flex; gap: 8px; width: 100%; }
+.hsheet .line .btn { flex: 1; }
+
+/* parent */
+.hgood-g { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.hgood-g button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 2px; border-radius: 14px; background: #FFF0F6; box-shadow: 0 3px 0 #F2C3DA; font-weight: 700; font-size: 12px; line-height: 1.15; }
+.hgood-g button span { font-size: 24px; }
+.hgood-g button:active { transform: translateY(2px); box-shadow: none; }
+.hrep .hintx { display: block; }
+@media (prefers-reduced-motion: reduce) { .hbed span, .henv { animation: none; } }

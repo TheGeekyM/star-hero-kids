@@ -12,8 +12,8 @@ android {
         applicationId "com.starhero.app"
         minSdk 26
         targetSdk 36
-        versionCode 29
-        versionName "2.14"
+        versionCode 30
+        versionName "2.15"
     }
     signingConfigs {
         release {

@@ -468,6 +468,6 @@ const Extras = (() => {
   setTimeout(wake, 4000);
 
   return { install, decor, shop, homeTop, homeDeeds, approveRows, pendingCount, photoTag, settings, certButton, after, saved,
-    certificate, hijri, ramadanOn, needsPhoto, ITEMS, tx };
+    certificate, hijri, ramadanOn, needsPhoto, ITEMS, tx, putPhoto, getPhoto };
 })();
 window.Extras = Extras; // a top-level const is not on window by itself
