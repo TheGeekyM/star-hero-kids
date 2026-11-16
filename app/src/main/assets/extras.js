@@ -172,8 +172,10 @@ const Extras = (() => {
   const DEEDS = [['help', '🤝'], ['share', '🍪'], ['salam', '👋'], ['kind', '💬'], ['tidy', '🧹'], ['sadaqa', '💝']];
   const items = (kid, day) => { const d = dayOf(kid, day); return d.x || (d.x = []); };
   const newItem = (k, w) => { items(st, today()).push({ id: Date.now() % 1e9, k, w, s: 'pending' }); };
-  const itemName = it => it.k === 'fast' ? `${tx('fastK')} · ${tx(it.w)}` : tx('d_' + it.w);
-  const itemIcon = it => it.k === 'fast' ? '🌙' : (DEEDS.find(d => d[0] === it.w) || [, '✨'])[1];
+  const more = it => window.More && More.item(it); // 2.1 items: revision, book, make-it-right (more.js)
+  const itemName = it => more(it) ? more(it).name : it.k === 'fast' ? `${tx('fastK')} · ${tx(it.w)}` : tx('d_' + it.w);
+  const itemIcon = it => more(it) ? more(it).icon : it.k === 'fast' ? '🌙' : (DEEDS.find(d => d[0] === it.w) || [, '✨'])[1];
+  const itemKind = it => more(it) ? more(it).kind : tx(it.k === 'fast' ? 'fastK' : 'deedK');
 
   function homeDeeds() {
     const list = items(st, today()).filter(i => i.k === 'deed');
@@ -188,7 +190,7 @@ const Extras = (() => {
     if (!out.length) return '';
     const dayName = d => d === today() ? t('todayW') : parse(d).toLocaleDateString(lang(), { weekday: 'long', day: 'numeric', month: 'short' });
     return out.map(([day, it]) => `<div class="row pend xrow"><span class="ico xemo">${itemIcon(it)}</span>
-      <span class="txt"><b>${tx(it.k === 'fast' ? 'fastK' : 'deedK')}</b><small>${dayName(day)} · ${itemName(it)}</small></span>
+      <span class="txt"><b>${itemKind(it)}</b><small>${dayName(day)} · ${itemName(it)}</small></span>
       <button class="no" data-a="xNo" data-id="${it.id}" data-day="${day}">${ic('x')}</button>
       <small class="rateq">${t('rateQ')}</small>
       <span class="rate" dir="ltr">${[1, 2, 3, 4, 5].map(r => `<button data-a="xRate" data-id="${it.id}" data-day="${day}" data-r="${r}"><span>${star.repeat(r)}</span><b>${r}</b></button>`).join('')}</span></div>`).join('');
@@ -360,7 +362,7 @@ const Extras = (() => {
       if (!i || st.stars < i.cost) return false;
       return later2({ icon: 'gift', text: tx('buyQ', i[lang() === 'ar' ? 'ar' : 'en'], i.cost), ok: tx('buy') }, () => {
         if (st.stars < i.cost) return;
-        const w = wear(); st.stars -= i.cost; w.own.push(i.id); w.on[i.slot] = i.id;
+        const w = wear(); spend(st, today(), i.cost, ['shop', i[lang() === 'ar' ? 'ar' : 'en']]); w.own.push(i.id); w.on[i.slot] = i.id;
         if (window.celebrate) celebrate();
       });
     },
@@ -387,7 +389,8 @@ const Extras = (() => {
     xRate: (id, el) => {
       const it = ((st.days[el.dataset.day] || {}).x || []).find(i => i.id === +id);
       if (!it || it.s !== 'pending') return false;
-      it.s = 'done'; it.r = +el.dataset.r; gain(st, el.dataset.day, it.r);
+      it.s = 'done'; it.r = +el.dataset.r; gain(st, el.dataset.day, it.r, [it.k, it.k === 'book' ? it.w : '']);
+      if (window.More) More.rated(it, el.dataset.day); // who approved; revision date; make-it-right clears the consequence
       if (typeof cheer === 'function') cheer({ stars: it.r });
     },
     xNo: (id, el) => { const it = ((st.days[el.dataset.day] || {}).x || []).find(i => i.id === +id); if (it && it.s === 'pending') it.s = 'no'; },

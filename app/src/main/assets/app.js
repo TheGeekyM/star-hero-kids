@@ -5,7 +5,7 @@ const T = {
     sorry: "Let's make today a great day!", stars: 'My stars', progress: '{0} of {1} done', streak: '{0} day streak',
     today: "Today's missions", waiting: 'Waiting for parent', done: 'Done!', plus: '+{0}',
     album: 'My sticker book', shareRep: 'Share this report', prayRem: 'Prayer-time reminders', prayCity: 'City', prayTitle: '🕌 Time for {0}', prayText: "{0}, it's time to pray!", todoL: 'To do', missedL: 'Missed', complete: 'Complete', undo: 'Undo', waitNote: 'Your parent will check it soon',
-    rest: 'Rest day! No missions today.', home: 'Home', journey: 'Journey', rewards: 'Rewards', parent: 'Parent zone',
+    rest: 'Rest day! No missions today.', home: 'Home', journey: 'Journey', rewards: 'Rewards', games: 'Games', videos: 'Videos', parent: 'Parent zone',
     world: 'World {0}', toChest: '{0} more full days to the treasure chest!',
     ask: 'Ask for it!', need: '{0} more', asked: 'Waiting for parent', myRewards: 'Rewards I earned', shop: 'Reward shop',
     shopSub: 'Collect stars, then ask for a reward!', noRewards: 'No rewards yet. Ask a parent to add some!',
@@ -43,7 +43,7 @@ const T = {
     sorry: 'هيا نجعل اليوم يوماً رائعاً!', stars: 'نجومي', progress: '{0} من {1}', streak: '{0} يوم متتالي',
     today: 'مهام اليوم', waiting: 'بانتظار الوالدين', done: 'تمّت!', plus: '+{0}',
     album: 'ألبوم الملصقات', shareRep: 'شارك هذا التقرير', prayRem: 'تذكير بمواقيت الصلاة', prayCity: 'المدينة', prayTitle: '🕌 حان وقت صلاة {0}', prayText: 'يا {0}، حان وقت الصلاة!', todoL: 'للإنجاز', missedL: 'فاتت', complete: 'أنجزتها', undo: 'تراجع', waitNote: 'سيتحقق والداك منها قريباً',
-    rest: 'يوم راحة! لا مهام اليوم.', home: 'الرئيسية', journey: 'الرحلة', rewards: 'الجوائز', parent: 'ركن الوالدين',
+    rest: 'يوم راحة! لا مهام اليوم.', home: 'الرئيسية', journey: 'الرحلة', rewards: 'الجوائز', games: 'الألعاب', videos: 'فيديو', parent: 'ركن الوالدين',
     world: 'العالم {0}', toChest: 'بقي {0} أيام كاملة لتصل إلى صندوق الكنز!',
     ask: 'اطلبها!', need: 'بقي {0}', asked: 'بانتظار الوالدين', myRewards: 'جوائز حصلت عليها', shop: 'متجر الجوائز',
     shopSub: 'اجمع النجوم ثم اطلب جائزتك!', noRewards: 'لا توجد جوائز بعد. اطلب من والديك إضافتها!',
@@ -81,7 +81,7 @@ const TASK_ICONS = ['quran', 'homework', '🕌', '🤲', '📚', '🧮', '🎨',
 const REWARD_ICONS = ['🍦', '🛝', '🎁', '🎮', '🍕', '🚲', '📱', '🎬', '⚽', '🍫', '🧸', '💵'];
 const PRAYER_ICONS = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
 const KID_COLORS = ['#7B3FE4', '#F0508F', '#1E8FF0', '#FF7A1A', '#12AFA0', '#1FB65A'];
-const SVG = { lock: ic('lock'), home: ic('home'), journey: ic('journey'), rewards: ic('rewards'), check: ic('check'), x: ic('x') }; // icons.js
+const SVG = { lock: ic('lock'), home: ic('home'), journey: ic('journey'), rewards: ic('rewards'), games: ic('game'), videos: ic('film'), check: ic('check'), x: ic('x') }; // icons.js
 
 const KEY = 'starhero';
 const app = document.getElementById('app');
@@ -149,14 +149,14 @@ function mission(task, i, day) {
   const acts = prayer
     ? `<div class="pr">${t('prayers').map((n, k) => `<button class="${ps[k] ? 'on' : ''}" data-a="pray" data-id="${task.id}" data-k="${k}" ${s === 'done' || s === 'missed' ? 'disabled' : ''}>
         ${ic(ps[k] ? 'check' : PRAYER_ICONS[k])}<small>${n}</small></button>`).join('')}</div>`
-    : s === 'todo' ? `<div class="acts">${guarded(task) ? `<button class="act start" data-a="guard" data-id="${task.id}">${ic('camera')}${t('start')}</button>` : ''}
+    : s === 'todo' ? `<div class="acts">${guarded(task) && (!window.Study || Study.useGuard()) ? `<button class="act start" data-a="guard" data-id="${task.id}">${ic('camera')}${t('start')}</button>` : window.Study ? Study.startBtn(task) : ''}
         <button class="act go" data-a="mark" data-id="${task.id}">${ic('check')}${t('complete')}</button></div>`
     : s === 'pending' ? `<div class="acts wait"><small>${t('waitNote')}</small><button class="act undo" data-a="mark" data-id="${task.id}">${ic('undo')}${t('undo')}</button></div>`
     : '';
   return `<div class="mission c${i % 6} ${s}" style="--i:${i}">
     <div class="mhead">${icon(task.icon)}
       <span class="txt"><b>${esc(task.title)}</b>${note ? `<small>${note}</small>` : ''}</span>
-      ${status(s)}</div>
+      ${status(s)}${window.Plus ? Plus.sayBtn(task.title) : ''}</div>
     <div class="mfoot">${chip(task, day)}</div>
     ${acts}
   </div>`;
@@ -199,10 +199,13 @@ function home() {
   </header>
   <main class="sheet">
     ${window.Extras ? Extras.homeTop() : ''}
+    ${window.More ? More.homeTop() : ''}
+    ${window.Plus ? Plus.homeTop() : ''}
     ${st.consequence ? `<div class="oops">${hero('sad')}<div>${oopsText()}</div></div>` : ''}
     <h2>${t('today')}</h2>
     ${due.length ? due.map((x, i) => mission(x, i, day)).join('') : `<div class="empty">${t('rest')}</div>`}
     ${quranCard()}
+    ${window.More ? More.homeCards() : ''}
     ${window.Extras ? Extras.homeDeeds() : ''}
   </main></div>`;
 }
@@ -318,6 +321,7 @@ function journey() {
   </div>
   <div class="jtop">
     ${window.Ambience ? `<button class="sndbtn" data-a="snd" aria-label="sound">${Ambience.muted() ? '🔇' : '🔊'}</button>` : '<i></i>'}
+    ${window.Plus ? Plus.storyBtn() : ''}
     ${pos.round ? `<div class="roundtag">${t('round', pos.round + 1)}</div>` : ''}
     <div class="pill">${star}<b>${st.stars}</b></div>
   </div>`;
@@ -337,11 +341,13 @@ function rewards() {
       </div>`;
     }).join('') || `<div class="empty">${t('noRewards')}</div>`}</div>
     ${got.length ? `<h2>${t('myRewards')}</h2><div class="got">${got.map(q => `<span>${icon(q.icon)} ${esc(q.title)}</span>`).join('')}</div>` : ''}
+    ${window.More ? More.jar() : ''}
+    ${window.Plus ? Plus.rewards() : ''}
     ${window.Extras ? Extras.shop() : ''}
   </div>`;
 }
 
-const tabs = () => `<nav class="tabs">${['home', 'journey', 'rewards'].map(k =>
+const tabs = () => `<nav class="tabs">${['home', 'journey', 'rewards', ...(window.Games ? ['games'] : []), 'videos'].map(k =>
   `<button class="${ui.tab === k ? 'on' : ''}" data-a="tab" data-id="${k}">${SVG[k]}<span>${t(k)}</span></button>`).join('')}</nav>`;
 
 function party() {
@@ -384,7 +390,7 @@ const dayName = day => day === today() ? t('todayW') : parse(day).toLocaleDateSt
 function pApprove() {
   const pend = pending(st), reqs = st.requests.filter(q => q.status === 'pending');
   const xrows = window.Extras ? Extras.approveRows() : ''; // good deeds and fasting (extras.js)
-  return `${!pend.length && !reqs.length && !xrows ? `<div class="empty">${t('nothing')}</div>` : ''}
+  return `${window.Plus ? Plus.approveRows() : ''}${!pend.length && !reqs.length && !xrows ? `<div class="empty">${t('nothing')}</div>` : ''}
     ${pend.length ? `<h3>${t('toApprove')}</h3>` + pend.map(({ day, task }) => {
       const g = (st.days[day] || {})['g' + task.id];
       const extra = task.type === 'prayer' ? t('prayersOf', prayed(st, day, task.id)) : [task.pages > 0 ? pagesText(task.pages) : '', task.target, g ? Guard.summary(g, lang()) : ''].filter(Boolean).map(esc).join(' · ');
@@ -413,11 +419,13 @@ function pTasks() {
   return st.tasks.map(x => `<div class="edit"><div class="line">${select(`task.${x.id}.icon`, x.icon, icons)}${field(t('title'), `task.${x.id}.title`, x.title, 'maxlength="30"')}</div>
     ${x.type === 'prayer' ? `<small class="hintx">${t('prayers').join(t('sep'))}</small>` : field(t('target'), `task.${x.id}.target`, x.target, 'maxlength="40"')}
     ${x.icon === 'quran' ? num(t('pagesDay'), `task.${x.id}.pages`, x.pages || 0, 0, 604) : ''}
+    ${window.Study ? Study.minsField(x) : ''}
     <div class="line">
       <div class="week">${t('days').map((n, i) => `<button class="${x.days.includes(i) ? 'on' : ''}" data-a="day" data-id="${x.id}" data-d="${i}">${n}</button>`).join('')}</div></div>
     <button class="link" data-a="delTask" data-id="${x.id}">${t('del')}</button></div>`).join('') +
     `<button class="add" data-a="addTask">${t('addTask')}</button>` +
-    (st.tasks.some(x => x.type === 'prayer') ? '' : `<button class="add" data-a="addPrayer">${t('addPrayer')}</button>`);
+    (st.tasks.some(x => x.type === 'prayer') ? '' : `<button class="add" data-a="addPrayer">${t('addPrayer')}</button>`) +
+    (window.Plus ? Plus.tests() : ''); // school tests (plus.js)
 }
 
 function pRewards() {
@@ -432,7 +440,7 @@ function pReport() {
   const r = report(st, today());
   const cell = c => c.s === 'off' ? '' : c.n !== null && c.n && c.n < PRAYERS && c.s !== 'missed' ? `<em>${c.n}/5</em>`
     : { done: '✅', missed: '❌', pending: '⏳', todo: '·' }[c.s];
-  return `${window.Share ? `<button class="btn sharebtn" data-a="shareReport">${ic('share')} ${t('shareRep')}</button>` : ''}${window.Extras ? Extras.certButton() : ''}<h3>${t('week')}</h3>
+  return `${window.Share ? `<button class="btn sharebtn" data-a="shareReport">${ic('share')} ${t('shareRep')}</button>` : ''}${window.Extras ? Extras.certButton() : ''}${window.More ? More.report() : ''}<h3>${t('week')}</h3>
     <div class="tiles">
       <div><b dir="ltr">${r.full}/7</b><small>${t('fullDays')}</small></div>
       <div class="up"><b dir="ltr">${r.plus ? '+' + r.plus : 0}</b><small>${t('earnedW')}</small></div>
@@ -473,12 +481,15 @@ function pSettings() {
     <h3>${t('lang')} · ${t('newPin')}</h3><div class="edit"><div class="line">
       <label><span>${t('lang')}</span>${select('db.0.lang', db.lang, [['en', 'English'], ['ar', 'العربية']])}</label>
       ${field(t('pin'), 'db.0.pin', db.pin, 'type="tel" inputmode="numeric" maxlength="4" dir="ltr"')}</div></div>
+    ${window.Study ? Study.settings() : ''}
+    ${window.Plus ? Plus.settings() : ''}
+    ${window.More ? More.settings() : ''}
     ${window.Extras ? Extras.settings() : ''}
     <button class="link danger" data-a="reset">${t('reset')}</button>`;
 }
 
 function parentZone() {
-  const waiting = k => pending(k).length + k.requests.filter(q => q.status === 'pending').length + (window.Extras ? Extras.pendingCount(k) : 0);
+  const waiting = k => pending(k).length + k.requests.filter(q => q.status === 'pending').length + (window.Extras ? Extras.pendingCount(k) : 0) + (window.Plus ? Plus.pendingCount(k) : 0);
   const body = { approve: pApprove, tasks: pTasks, rewards: pRewards, report: pReport, settings: pSettings }[ui.ptab]();
   return `<div class="parent"><header><h1>${t('parent')}</h1><button class="btn go" data-a="exit">${t('exit')}</button></header>
     ${db.kids.length > 1 ? `<div class="kidbar">${db.kids.map((k, i) => `<button class="${i === db.cur ? 'on' : ''}" data-a="pkid" data-id="${i}">${avatar(k)}<span>${esc(k.name)}</span>${waiting(k) ? `<em>${waiting(k)}</em>` : ''}</button>`).join('')}</div>` : ''}
@@ -510,10 +521,12 @@ function render() {
   document.documentElement.dir = lang() === 'ar' ? 'rtl' : 'ltr';
   app.innerHTML = !db ? onboarding()
     : ui.parent ? parentZone()
-    : ({ home, journey, rewards }[ui.tab]()) + tabs() + (overlay ? { pin: pinpad, picker, oops, party }[overlay]() : '');
+    : ({ home, journey, rewards, games: () => Games.page() }[ui.tab]()) + tabs() + (overlay ? { pin: pinpad, picker, oops, party }[overlay]() : '');
   const now = app.querySelector('.scroll');
   if (same && now) now.scrollTop = top;
   if (window.Extras) Extras.after(app); // homework photos, parent voice cheer
+  if (window.More) More.after(app); // play-time limit
+  if (window.Plus) Plus.after(app); // love note, pet hatching
   // a sticker just earned (badges.js) is celebrated once, on the child's screens with nothing else on top
   if (db && !ui.parent && !overlay && window.Badges) setTimeout(() => Badges.check(st, lang()), 400);
   // planet sounds (ambience.js) only on the Journey tab
@@ -538,7 +551,10 @@ const drop = (list, id, msg) => later({ icon: 'missed', text: msg, ok: t('del'),
 const pick = i => { db.cur = +i; use(); };
 
 const actions = {
-  tab: id => { ui.tab = id; ui.world = null; },
+  tab: id => {
+    if (id === 'videos') { try { sessionStorage.setItem('sh-nosplash', '1'); } catch (e) { /* */ } save(); location.href = 'videos.html'; return false; } // its own page (videos.js)
+    ui.tab = id; ui.world = null;
+  },
   world: id => { ui.world = +id; },
   snd: () => { Ambience.toggle(); },
   mark: id => {
@@ -550,7 +566,7 @@ const actions = {
   prayOn: id => { db.prayer = Object.assign(prayerCfg(), { on: id === 'true' }); if (db.prayer.on && window.Android) try { Android.askNotify(); } catch (e) { /* old app */ } syncPrayers(); },
   guard: id => { Guard.open(st, st.tasks.find(x => x.id === +id), lang()); return false; },
   pray: (id, el) => { markPrayer(st, today(), +id, +el.dataset.k); tune([523 + 60 * el.dataset.k]); },
-  ask: id => { if (requestReward(st, +id)) tune([523, 784]); },
+  ask: id => { if (requestReward(st, +id, today())) tune([523, 784]); },
   picker: () => ui.picker = true,
   closePicker: (id, el, e) => { if (e.target === el) ui.picker = false; else return false; }, // tap outside the card
   pick: id => { pick(id); ui.picker = false; ui.tab = 'home'; },
@@ -570,8 +586,8 @@ const actions = {
   ptab: id => ui.ptab = id,
   approve: (id, el) => { const ev = approve(st, el.dataset.day, +id, +el.dataset.r); if (ev) cheer(ev); },
   reject: (id, el) => reject(st, el.dataset.day, +id, today()),
-  grant: id => { const q = st.requests.find(q => q.id === +id); answerReward(st, +id, true); cheer({ gift: q.title }); },
-  decline: id => answerReward(st, +id, false),
+  grant: id => { const q = st.requests.find(q => q.id === +id); answerReward(st, +id, true, today()); cheer({ gift: q.title }); },
+  decline: id => answerReward(st, +id, false, today()),
   clearCons: () => { st.consequence = null; },
   adj: id => adjust(st, today(), +id),
   day: (id, el) => { const x = st.tasks.find(x => x.id === +id), d = +el.dataset.d; x.days = x.days.includes(d) ? x.days.filter(n => n !== d) : x.days.concat(d); },
@@ -611,7 +627,11 @@ const actions = {
     db = newDb(ui.lang); db.pin = pin; addKid(db, name, today()); use();
   },
 };
+if (window.Games) Games.install(actions); // 2.4: simple and puzzle games, opened with stars
 if (window.Extras) Extras.install(actions); // homework photo before Complete, dress-up, good deeds, Ramadan, cheers, backup
+if (window.Study) Study.install(actions); // 2.3: study timer with warrior rests
+if (window.Plus) Plus.install(actions); // 2.2: pet, routines, tests, read-aloud, stories, ideas, love notes, star statement
+if (window.More) More.install(actions); // 2.1: second parent PIN, hifz, quiz, books, jar, mood, make-it-right, play-time limit
 
 // Focus Guard finished well: keep its summary for the parent and send the mission for approval.
 window.guardDone = (id, sum) => {

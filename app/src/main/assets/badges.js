@@ -26,6 +26,9 @@ const BADGES = [
   ['amma', 'trophy', 'c4', 'Juz ʿAmma hafiz', 'حافظ جزء عمّ', 'Memorize all of Juz ʿAmma', 'احفظ جزء عمّ كاملاً', c => AMMA.every(s => c.done.has(s))],
   ['prayers', 'mosque', 'c1', 'Prayer champion', 'بطل الصلاة', 'All 35 prayers in one week', 'كل الصلوات الـ35 في أسبوع', c => c.prayers >= 35],
   ['khatma', 'trophy', 'c3', 'Khatma!', 'ختمة!', 'Finish reading the whole Quran', 'اختم القرآن كاملاً', c => c.khatmas >= 1],
+  ['book1', 'books', 'c3', 'First book', 'أول كتاب', 'Finish a book', 'أنهِ كتاباً', c => c.books >= 1],
+  ['bookworm', 'books', 'c2', 'Bookworm', 'محب القراءة', 'A book every week, 4 weeks in a row', 'كتاب كل أسبوع لمدة 4 أسابيع متتالية', c => c.bookWeeks >= 4],
+  ['quiz', 'target', 'c4', 'Quiz star', 'نجم المسابقة', 'Get every question right in the Quran quiz', 'أجب عن كل أسئلة مسابقة القرآن صحيحاً', c => c.quizBest >= 5],
 ];
 
 const T = {
@@ -48,7 +51,10 @@ function facts(kid) {
   for (const d of Object.values(kid.days || {})) { earned += d._p || 0; doneMissions += Object.values(d).filter(v => v === 'done').length; }
   let prayers = 0;
   try { prayers = report(kid, today()).prayers; } catch (e) { /* no report yet */ }
-  return { best: kid.best || 0, steps: kid.steps || 0, earned, doneMissions, khatmas: (kid.quran || {}).khatmas || 0, log: g.log, hifz: g.hifz, done, memorized: done.size, prayers };
+  let books = 0;
+  for (const d of Object.values(kid.days || {})) books += (d.x || []).filter(i => i.k === 'book' && i.s === 'done').length;
+  const bookWeeks = typeof bookStreak === 'function' ? bookStreak(kid, today()) : 0, quizBest = (kid.quiz || {}).best || 0;
+  return { books, bookWeeks, quizBest, best: kid.best || 0, steps: kid.steps || 0, earned, doneMissions, khatmas: (kid.quran || {}).khatmas || 0, log: g.log, hifz: g.hifz, done, memorized: done.size, prayers };
 }
 const mine = kid => store[kid.id] || (store[kid.id] = {});
 
@@ -121,7 +127,7 @@ root.addEventListener('click', e => {
 const appBack = window.onBack;
 window.onBack = () => { if (A) { close(); return true; } return appBack ? appBack() : false; };
 
-window.Badges = { open, close, check, BADGES };
+window.Badges = { open, close, check, BADGES, AYAS };
 if (typeof db !== 'undefined' && db && window.render) render(); // app.js drew Home before this file loaded: add the medal button and check stickers
 if (typeof module !== 'undefined') module.exports = { BADGES, AYAS };
 })();

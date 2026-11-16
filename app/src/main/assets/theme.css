@@ -157,3 +157,7 @@
 /* share button on the parent report */
 .sharebtn { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 4px 0 6px; background: linear-gradient(#5CE27F, #22B85A) !important; box-shadow: 0 5px 0 #168A41 !important; }
 .sharebtn svg { width: 24px; height: 24px; }
+
+/* 5th tab: videos (videos.html). With 5 tabs, phones show labels only on the open tab */
+.tabs button:nth-child(5).on { background: linear-gradient(#FFB36B, #FF7A1A); box-shadow: 0 4px 0 #C95A00, inset 0 2px 0 rgba(255, 255, 255, .4); }
+@media (max-width: 480px) { .tabs button:not(.on) span { display: none; } }

@@ -61,16 +61,27 @@ public class MainActivity extends Activity {
             public WebResourceResponse shouldInterceptRequest(WebView v, WebResourceRequest r) {
                 String url = r.getUrl().toString();
                 if (!url.startsWith("http")) return null;
-                if (!url.startsWith(HOST)) return new WebResourceResponse("text/plain", "utf-8", 404, "Offline", null, null); // nothing leaves the phone
+                if (!url.startsWith(HOST)) { // nothing leaves the phone, except YouTube for the parent-chosen videos (videos.js)
+                    return youtube(r.getUrl().getHost()) ? null : new WebResourceResponse("text/plain", "utf-8", 404, "Offline", null, null);
+                }
                 String path = r.getUrl().getPath().substring(1);
                 Map<String, String> h = new HashMap<>(); // lets the speech model use several CPU cores if the WebView supports it
-                h.put("Cross-Origin-Opener-Policy", "same-origin");
-                h.put("Cross-Origin-Embedder-Policy", "require-corp");
+                if (!path.equals("videos.html")) { // ...but these headers would block the YouTube player, so the videos page goes without
+                    h.put("Cross-Origin-Opener-Policy", "same-origin");
+                    h.put("Cross-Origin-Embedder-Policy", "require-corp");
+                }
                 try {
                     return new WebResourceResponse(mime(path), null, 200, "OK", h, getAssets().open(path.isEmpty() ? "index.html" : path));
                 } catch (Exception e) {
                     return new WebResourceResponse("text/plain", "utf-8", 404, "Not found", h, null);
                 }
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest r) {
+                // Only the app's own pages open in the app window: a tap can never take the child out to YouTube or the web.
+                String url = r.getUrl().toString();
+                return !(url.startsWith(HOST) || url.startsWith("file:///android_asset/")) && r.isForMainFrame();
             }
 
             @Override
@@ -145,6 +156,33 @@ public class MainActivity extends Activity {
     }
 
     /** Called from JavaScript as window.Android.* (on a background thread). */
+    /** Hosts the YouTube player needs. Ads and trackers (doubleclick, googlesyndication…) stay blocked. */
+    private static boolean youtube(String host) {
+        if (host == null) return false;
+        for (String d : new String[]{"youtube.com", "youtube-nocookie.com", "ytimg.com", "googlevideo.com", "ggpht.com", "gstatic.com", "googleapis.com", "google.com"})
+            if (host.equals(d) || host.endsWith("." + d)) return true;
+        return false;
+    }
+
+    private android.speech.tts.TextToSpeech tts;
+    private boolean ttsReady;
+
+    private void say(String text, String lang) {
+        try {
+            tts.setLanguage("ar".equals(lang) ? new java.util.Locale("ar") : java.util.Locale.US);
+            tts.setSpeechRate("ar".equals(lang) ? 0.9f : 0.95f);
+            tts.speak(text, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, "starhero");
+        } catch (Exception e) {
+            // no voice for this language: nothing is read
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (tts != null) tts.shutdown();
+        super.onDestroy();
+    }
+
     class Bridge {
         /** Home-screen widget numbers (extras.js). */
         @JavascriptInterface
@@ -187,6 +225,21 @@ public class MainActivity extends Activity {
             } catch (Exception e) {
                 // nothing shared; the page keeps working
             }
+        }
+
+        /** Read-aloud (plus.js): the phone's own text-to-speech voice. lang = "ar" or "en". */
+        @JavascriptInterface
+        public void speak(String text, String lang) {
+            runOnUiThread(() -> {
+                if (tts == null) {
+                    tts = new android.speech.tts.TextToSpeech(MainActivity.this, ok -> { ttsReady = ok == android.speech.tts.TextToSpeech.SUCCESS; if (ttsReady) say(text, lang); });
+                } else if (ttsReady) say(text, lang);
+            });
+        }
+
+        @JavascriptInterface
+        public void stopSpeaking() {
+            runOnUiThread(() -> { if (tts != null) tts.stop(); });
         }
 
         /** Celebration buzz. pattern = "on,off,on,..." in milliseconds. */

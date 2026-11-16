@@ -3,6 +3,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- only for the kids videos (YouTube); everything else stays offline -->
     <!-- Focus Guard: watched on the phone only, never recorded or sent -->
     <!-- Adhan reminders on time (the app falls back to slightly-late alarms if the user does not allow exact ones) -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
@@ -11,6 +12,10 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-feature android:name="android.hardware.camera.front" android:required="false" />
     <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <queries>
+        <intent><action android:name="android.intent.action.TTS_SERVICE" /></intent>
+    </queries>
+
     <application
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"

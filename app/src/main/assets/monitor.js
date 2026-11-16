@@ -63,6 +63,8 @@ const W = 64, H = 48; // camera checks work on a tiny grey picture
 
 let lng = 'en';
 const tr = (k, ...a) => (S[lng][k] || k).replace(/\{(\d)\}/g, (_, i) => a[i]);
+// "5 min break every 20 min" with the parent's own numbers (study.js)
+const breakLabel = k => { const [b, r] = window.Study ? Study.blocks() : [20, 5]; return k === 'breakOn' ? tr(k).replace(/\b(20|5)\b/g, m => m === '20' ? b : r) : tr(k); };
 const esc = s => String(s).replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
 const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } };
 const store = load();
@@ -160,7 +162,7 @@ function step() {
       if (++G.seg >= G.plan.length) return finish(true);
       G.segEnd = t + G.plan[G.seg].ms; G.resting = G.plan[G.seg].rest;
       if (!G.resting) { G.ref = null; G.since = now; } // the child may have moved during the break: retake the seat picture
-      beep(G.resting ? [523, 659, 784] : [784, 659, 523]);
+      if (window.Study) { if (G.resting) Study.restVoice(); else Study.backVoice(); } else beep(G.resting ? [523, 659, 784] : [784, 659, 523]); // the parent's rest sentence (study.js)
       return draw();
     }
     if (!G.resting) for (const a of G.rules({ level: G.level, motion: G.motion, off: G.off }, now)) alert(a);
@@ -229,7 +231,7 @@ function open(kid, task, language) {
   lng = language === 'ar' ? 'ar' : 'en';
   const isQ = task.icon === 'quran' || task.pages > 0;
   const last = (store.next || {})[kid.id] || { s: 1, a: 1, b: 7 };
-  G = { kid, task, kind: isQ ? 'quran' : 'homework', step: 'setup', s: last.s, a: last.a, b: last.b, minutes: cfg.minutes,
+  G = { kid, task, kind: isQ ? 'quran' : 'homework', step: 'setup', s: last.s, a: last.a, b: last.b, minutes: (window.Study && task && Study.minsOf(task)) || cfg.minutes,
     level: 0, motion: 0, off: 0, mute: 0, voiceUntil: 0, since: performance.now(), alerts: {}, waiting: 0, sent: 0, focusMs: 0, hifz: cfg.hifz };
   root.hidden = false;
   if (window.Android && Android.keepAwake) Android.keepAwake(true);
@@ -257,7 +259,8 @@ function start() {
     G.words = ML.passage(quran, G.s, G.a, G.b);
     G.marks = []; G.from = 0;
   } else {
-    G.plan = ML.schedule(G.minutes, cfg.breaks ? 20 : G.minutes, cfg.breaks ? 5 : 0);
+    const [blk, rst] = window.Study ? Study.blocks() : [20, 5]; // the parent's study/rest lengths (study.js)
+    G.plan = ML.schedule(G.minutes, cfg.breaks ? blk : G.minutes, cfg.breaks ? rst : 0);
     G.seg = 0; G.segEnd = Date.now() + G.plan[0].ms; G.resting = false;
   }
   hush();
@@ -392,7 +395,7 @@ function setup() {
     : `<span class="glabel">${tr('minutes')}</span><div class="gchips">${[10, 15, 20, 30, 45, 60].map(m =>
       `<button class="${G.minutes === m ? 'on' : ''}" data-g="minutes" data-v="${m}">${tr('min', m)}</button>`).join('')}</div>
       <span class="glabel">${tr('breaks')}</span><div class="gchips">${[[true, 'breakOn'], [false, 'breakOff']].map(([v, k]) =>
-      `<button class="${cfg.breaks === v ? 'on' : ''}" data-g="breaks" data-v="${v}">${tr(k)}</button>`).join('')}</div>`;
+      `<button class="${cfg.breaks === v ? 'on' : ''}" data-g="breaks" data-v="${v}">${breakLabel(k)}</button>`).join('')}</div>`;
   const prac = isQ && quran ? kidList('practice', G.kid.id) : [];
   return `<div class="gpage setup">${G.err ? '' : camTile()}
     <div class="gtop"><header><button class="gx" data-g="close" aria-label="${tr('close')}">${ic('x')}</button><h1>${tr('title')}</h1></header>

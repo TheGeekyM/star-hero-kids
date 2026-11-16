@@ -2,6 +2,7 @@
 // lands with a sparkle and a fanfare, flies off, and the curtains open on the app. Tap to skip.
 // Self-contained: its own styles and its own sounds (Web Audio, no files). Silent when the sound is muted (🔇).
 (() => {
+  try { if (sessionStorage.getItem('sh-nosplash')) { sessionStorage.removeItem('sh-nosplash'); return; } } catch (e) { /* show it */ } // back from the videos page
   let lang = (navigator.language || '').startsWith('ar') ? 'ar' : 'en';
   try { const db = JSON.parse(localStorage.getItem('starhero') || 'null'); if (db && db.lang) lang = db.lang; } catch (e) { /* first start */ }
   let quiet = false;

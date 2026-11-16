@@ -1,0 +1,77 @@
+/* Star Hero 2.1 (more.js): revision, quiz, books, mood, double day, make-it-right, savings jar, hifz grid, play-time lock */
+.msub { font-weight: 700; font-size: 14px; color: var(--mute); margin: -2px 0 10px; line-height: 1.3; }
+.mrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #fff; border-radius: 18px; padding: 8px 8px 8px 14px; margin-bottom: 8px; box-shadow: 0 3px 0 rgba(0, 0, 0, .07); }
+.mrow b { font-size: 17px; font-weight: 800; }
+.mrow .btn { width: auto; flex: none; padding: 8px 14px; font-size: 15px; margin: 0; }
+.mbig { font-weight: 800; font-size: 20px; display: inline-flex; align-items: center; gap: 4px; }
+.mbig .s { width: 22px; }
+
+.mrev { background: linear-gradient(160deg, #EEF6FF, #CFE6FF); box-shadow: 0 7px 0 #93C3F2; }
+.mquizc { background: linear-gradient(160deg, #FFF4E6, #FFDDB0); box-shadow: 0 7px 0 #F2B66E; }
+.mbooks { background: linear-gradient(160deg, #FFF0F6, #FFD0E3); box-shadow: 0 7px 0 #F29BBE; }
+.mfix { background: linear-gradient(160deg, #FFF8E1, #FFE7A0); box-shadow: 0 7px 0 #E8C25A; }
+.mjar { background: linear-gradient(160deg, #F2FFF7, #C9F5DA); box-shadow: 0 7px 0 #8FDDA9; color: var(--ink); margin-top: 18px; }
+.mjar h3 { font-size: 16px; margin: 4px 0 8px; }
+
+/* surprise double day */
+.mdouble { margin-bottom: 16px; padding: 12px 16px; border-radius: 22px; text-align: center; color: #fff; display: flex; flex-direction: column;
+  background: linear-gradient(100deg, #FF7A1A, #FF3D7F, #7B3FE4, #FF7A1A); background-size: 300% 100%; animation: mShine 4s linear infinite; box-shadow: 0 6px 0 #B5265E; }
+.mdouble b { font-size: 19px; font-weight: 800; text-shadow: 0 2px 0 rgba(0, 0, 0, .2); }
+.mdouble small { font-weight: 700; opacity: .95; }
+@keyframes mShine { to { background-position: 300% 0; } }
+
+/* mood check-in */
+.mmood { background: linear-gradient(160deg, #F4EEFF, #DCCEFF); box-shadow: 0 7px 0 #B39CF0; text-align: center; }
+.mmood > b { font-size: 18px; font-weight: 800; }
+.mmood > div { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+.mmood button { display: flex; flex-direction: column; align-items: center; padding: 8px 2px; border-radius: 18px; background: #fff; box-shadow: 0 4px 0 #C8B8F2; }
+.mmood button:active { transform: translateY(3px); box-shadow: 0 1px 0 #C8B8F2; }
+.mmood span { font-size: 34px; line-height: 1.1; }
+.mmood small { font-weight: 800; font-size: 13px; }
+
+/* quiz */
+.mquiz .xpick-card { display: flex; flex-direction: column; align-items: center; gap: 8px; max-height: 92vh; overflow-y: auto; }
+.mqof { font-weight: 800; color: var(--mute); }
+.mplay { background: #FFF1D6; border-radius: 16px; padding: 6px 14px; font-weight: 800; box-shadow: 0 3px 0 #F2C27A; }
+.mayah { font-family: system-ui, serif; font-size: 22px; line-height: 1.8; background: #F6F2FF; border-radius: 18px; padding: 10px 14px; width: 100%; }
+.mopts { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.mopts button { font-family: system-ui, serif; font-size: 19px; line-height: 1.7; padding: 10px 12px; border-radius: 18px; background: #fff; border: 3px solid #E3DCFA; box-shadow: 0 4px 0 #E3DCFA; text-align: center; }
+.mopts button.ok { border-color: #1FB65A; background: #E9FFF1; box-shadow: 0 4px 0 #8FDDA9; }
+.mopts button.bad { border-color: #E5484D; background: #FFECEC; box-shadow: 0 4px 0 #F2A4A6; }
+.mopts button.dim { opacity: .45; }
+.mfeed { font-weight: 800; font-size: 18px; }
+.mfeed.ok { color: #1A9E4E; } .mfeed.bad { color: #C9353A; }
+.mqhero { width: 120px; height: 150px; margin: 0 auto; }
+
+/* savings jar */
+.mgoal { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 4px; }
+.mgoal .ico { width: 30px; height: 30px; }
+.mjarrow { display: flex; gap: 16px; align-items: center; }
+.mjarrow > div:last-child { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.mjarrow .line { display: flex; gap: 8px; }
+.mjarrow .btn { width: auto; padding: 8px 14px; font-size: 15px; margin: 0; }
+.mjarv { position: relative; flex: none; width: 92px; height: 120px; border-radius: 22px 22px 30px 30px; background: rgba(255, 255, 255, .7);
+  border: 4px solid #fff; box-shadow: inset 0 0 0 2px #A8E8BD, 0 5px 0 #8FDDA9; overflow: hidden; }
+.mjarv::before { content: ''; position: absolute; top: -4px; left: 14px; right: 14px; height: 12px; border-radius: 6px; background: #C77F00; z-index: 2; }
+.mjarv i { position: absolute; left: 0; right: 0; bottom: 0; height: var(--p); background: linear-gradient(#FFE27A, #FFC531 40%, #E89A00);
+  transition: height .8s var(--ease, ease); box-shadow: inset 0 6px 0 rgba(255, 255, 255, .45); }
+.mjarv span { position: absolute; inset: 0; display: grid; place-items: center; z-index: 1; }
+.mjarv.full { animation: mWiggle 1.2s ease-in-out infinite; }
+@keyframes mWiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } }
+
+/* parent: monthly report buttons, who approved, hifz grid */
+.mmonth { display: flex; gap: 8px; margin: 8px 0; }
+.mmonth .btn { flex: 1; font-size: 15px; padding: 10px 8px; }
+.mwho .xchip { flex: none; }
+.mhifz { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; margin-top: 8px; }
+.mhifz button { display: flex; flex-direction: column; align-items: center; padding: 6px 4px; border-radius: 14px; background: #F4F2FA; border: 2px solid transparent; font-weight: 800; font-size: 15px; line-height: 1.2; }
+.mhifz button i { font-style: normal; font-size: 11px; color: var(--mute); }
+.mhifz button small { font-size: 10px; min-height: 12px; color: var(--mute); }
+.mhifz button.m { background: #E9FFF1; border-color: #1FB65A; }
+.mhifz button.w { background: #FFF4DB; border-color: #E89A00; }
+
+/* play-time lock */
+.mlock { z-index: 30; background: linear-gradient(160deg, rgba(46, 160, 90, .92), rgba(30, 110, 200, .92)); }
+.mlock .hero3d { width: 130px; height: 160px; }
+.mlock .link { display: inline-flex; align-items: center; gap: 6px; }
+@media (prefers-reduced-motion: reduce) { .mdouble, .mjarv.full { animation: none; } }
